@@ -53,6 +53,10 @@ function initModel(sequelize: Sequelize): typeof job_log {
         type: DataTypes.BIGINT,
         allowNull: false,
         defaultValue: true,
+        references: {
+          model: "jobs",
+          key: "id",
+        },
       },
       job_time: {
         type: DataTypes.DATE,
