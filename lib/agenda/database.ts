@@ -98,7 +98,6 @@ export interface entityAttributes {
 export type entityPk = "id";
 export type entityId = jobs[entityPk];
 export type entityOptionalAttributes =
-  | "id"
   | "disabled"
   | "nextRunAt"
   | "lockedAt"
@@ -161,7 +160,7 @@ function initModel(sequelize: Sequelize): typeof jobs {
       id: {
         autoIncrement: true,
         type: DataTypes.BIGINT,
-        allowNull: true,
+        allowNull: false,
         primaryKey: true,
       },
       agenda: {
