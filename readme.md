@@ -60,3 +60,9 @@ export default async function CronJob() {
     console.log(time(), `Job <${job.attrs.name}> failed:`, error);
   });
 }
+
+### The output should be like this:
+# 17:44:39 Job <test cron> starting
+# SUCCESS: >>>>>>>>>  test cron ,now:  2022-07-27T14:44:39.419Z , nextRunTime:  2022-07-27T14:44:40.000Z
+# 17:44:39 Job <test cron> succeeded
+
