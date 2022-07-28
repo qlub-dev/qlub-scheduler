@@ -2,6 +2,8 @@ import { Sequelize } from "sequelize-typescript";
 import { DataTypes } from "sequelize/types";
 import { jobs } from "../agenda/database";
 import { Job, JobAttributesData } from "../job";
+import { complete } from "./complete";
+import { fail } from "./fail";
 import { JobLog } from "./job.log.entity";
 import {
   JobDetail,
@@ -9,28 +11,19 @@ import {
   PAGE_LIMIT,
   Pagination,
 } from "./job.log.service";
+import { success } from "./success";
 
 export class JobLogServiceImpl implements JobLogService {
   _job_log: typeof JobLog;
   _db: Sequelize;
+
+  static success: typeof success;
+  static fail: typeof fail;
+  static complete: typeof complete;
+
   constructor(sequelize: Sequelize) {
     this._db = sequelize;
     this._job_log = initModel(this._db);
-  }
-  async success(job: Job<JobAttributesData>): Promise<void> {
-    const success_log: any = {
-      ...job.attrs,
-    };
-    JobLog.create(success_log);
-  }
-  async complete(job: Job<JobAttributesData>): Promise<void> {
-    //TODO implement here
-  }
-  async fail(error: any, job: Job<JobAttributesData>): Promise<void> {
-    const fail_log: any = {
-      ...job.attrs,
-    };
-    JobLog.create(fail_log);
   }
   async getJobs(pagination: Pagination): Promise<any> {
     return jobs.findAll({
@@ -52,6 +45,10 @@ export class JobLogServiceImpl implements JobLogService {
     });
   }
 }
+
+JobLogServiceImpl.success = success;
+JobLogServiceImpl.complete = complete;
+JobLogServiceImpl.fail = fail;
 
 function initModel(sequelize: Sequelize): typeof JobLog {
   return JobLog.init(

@@ -8,7 +8,7 @@ export { JobOptions } from "./job/repeat-every";
 import { Agenda } from "./agenda";
 export { Agenda };
 
-import { QlubSchedulerService } from "./agenda/qlub.scheduler";
-export { QlubSchedulerService };
+import { SchedulerService } from "./agenda/scheduler.service";
+export { SchedulerService };
 
-export default QlubSchedulerService;
+export default SchedulerService;

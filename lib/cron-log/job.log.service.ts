@@ -17,9 +17,6 @@ export interface JobDetail extends Pagination {
 }
 
 export interface JobLogService {
-  success: (job: Job) => Promise<void>;
-  complete: (job: Job) => Promise<void>;
-  fail: (error: any, job: Job) => Promise<void>;
   getJobs: (pagination: Pagination) => Promise<any>;
   getJobLogs: (cronDetail: JobDetail) => Promise<any>;
 }
