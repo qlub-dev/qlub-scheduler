@@ -9,6 +9,7 @@ export interface entityAttributes {
   job: JSON;
   result_status: string;
   fail_reason?: string | undefined;
+  cancelled_at?: Date | undefined;
   created_at: Date;
   updated_at: Date;
 }
@@ -32,6 +33,7 @@ export class job_log
   job!: JSON;
   result_status!: string;
   fail_reason?: string | undefined;
+  cancelled_at?: Date | undefined;
   created_at!: Date;
   updated_at!: Date;
 }
@@ -73,6 +75,10 @@ function initModel(sequelize: Sequelize): typeof job_log {
       },
       fail_reason: {
         type: DataTypes.STRING,
+        allowNull: true,
+      },
+      cancelled_at: {
+        type: DataTypes.DATE,
         allowNull: true,
       },
       created_at: {
