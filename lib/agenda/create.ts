@@ -26,6 +26,7 @@ export const create = function (this: Agenda, name: string, data: any): Job {
     priority,
     shouldSaveResult,
     agenda: this,
+    disabled: false,
   });
   return job;
 };
