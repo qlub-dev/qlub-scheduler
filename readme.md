@@ -47,9 +47,6 @@ export default async function CronJob() {
   await agenda.start();
   await agenda.every("* * * * * *", "test cron");
 
-  agenda.on("ready", () => {
-    console.log("ready");
-  });
   agenda.on("start", (job) => {
     console.log(time(), `Job <${job.attrs.name}> starting`);
   });
