@@ -5,6 +5,7 @@ export enum Direction {
   DESC = "DESC",
 }
 
+export const PAGE_LIMIT = 20;
 export interface Pagination {
   pageNumber: number;
   sortBy: string;
@@ -17,7 +18,8 @@ export interface JobDetail extends Pagination {
 
 export interface JobLogService {
   success: (job: Job) => Promise<void>;
+  complete: (job: Job) => Promise<void>;
   fail: (error: any, job: Job) => Promise<void>;
-  getCrons: (pagination: Pagination) => Promise<any>;
-  getCronLogs: (cronDetail: JobDetail) => Promise<any>;
+  getJobs: (pagination: Pagination) => Promise<any>;
+  getJobLogs: (cronDetail: JobDetail) => Promise<any>;
 }
