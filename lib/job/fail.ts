@@ -1,5 +1,6 @@
 import createDebugger from "debug";
 import { Job } from ".";
+import { JobStatus } from "../agenda/database";
 
 const debug = createDebugger("agenda:job");
 
@@ -14,6 +15,7 @@ export const fail = function (this: Job, reason: string | Error): Job {
     reason = reason.message;
   }
 
+  this.attrs.status = JobStatus.FAILED;
   this.attrs.failReason = reason;
   this.attrs.failCount = (this.attrs.failCount || 0) + 1;
   const now = new Date();

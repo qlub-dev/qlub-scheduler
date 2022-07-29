@@ -1,6 +1,6 @@
 import { Agenda } from ".";
 import { JobLogService } from "../cron-log/job.log.service";
-import { JobLogServiceImpl } from "../cron-log/job.log.service.ımpl";
+import { JobLogServiceImpl } from "../cron-log/job.log.service.impl";
 import { DbConfig } from "./database";
 
 class SchedulerService {
@@ -22,7 +22,15 @@ class SchedulerService {
     SchedulerService._jobLogService = new JobLogServiceImpl(
       SchedulerService._agenda._db
     );
-    SchedulerService._agenda.start();
+    SchedulerService._agenda.on("start", (job) => {
+      JobLogServiceImpl.start(job);
+    });
+    SchedulerService._agenda.on("success", (job) => {
+      JobLogServiceImpl.success(job);
+    });
+    SchedulerService._agenda.on("fail", (error, job) => {
+      JobLogServiceImpl.fail(error, job);
+    });
     return SchedulerService._agenda;
   }
 

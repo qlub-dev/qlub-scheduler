@@ -1,12 +1,23 @@
 import { Job, JobAttributesData } from "../job";
-import { JobLog } from "./job.log.entity";
+import { JobLog, ResultStatus } from "./job.log.entity";
 
 export const fail = async (
-  error: any,
+  reason: string | Error,
   job: Job<JobAttributesData>
 ): Promise<void> => {
+  if (reason instanceof Error) {
+    reason = reason.message;
+  }
   const fail_log: any = {
-    ...job.attrs,
+    fail_reason: reason,
+    job_name: job.attrs.name,
+    job_id: job.attrs.id,
+    job_time: new Date(),
+    job: job.toJSON(),
+    result_status: ResultStatus.ERROR,
+    created_at: new Date(),
   };
-  JobLog.create(fail_log);
+  JobLog.create<any>(fail_log).catch((error) =>
+    console.log("JobLog fail create error: ", error)
+  );
 };
