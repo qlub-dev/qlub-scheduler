@@ -122,7 +122,7 @@ class Agenda extends EventEmitter {
   /**
    * Constructs a new Agenda object.
    * @param config Optional configuration to initialize the Agenda.
-   * @param cb Optional callback called with the MongoDB collection.
+   * @param cb Optional callback called with the DB collection.
    */
   constructor(
     config: AgendaConfig,

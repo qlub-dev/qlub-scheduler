@@ -16,20 +16,20 @@ export interface DbConfig {
   dialect?: Dialect;
 }
 /**
- * Connect to the spec'd MongoDB server and database.
+ * Connect to the spec'd DB server and database.
  *
  * NOTE:
  * If `url` includes auth details then `options` must specify: { 'uri_decode_auth': true }. This does Auth on
  * the specified database, not the Admin database. If you are using Auth on the Admin DB and not on the Agenda DB,
- * then you need to authenticate against the Admin DB and then pass the MongoDB instance into the constructor
- * or use Agenda.mongo(). If your app already has a MongoDB connection then use that. ie. specify config.mongo in
+ * then you need to authenticate against the Admin DB and then pass the DB instance into the constructor
+ * or use Agenda.mongo(). If your app already has a DB connection then use that. ie. specify config.mongo in
  * the constructor or use Agenda.mongo().
  * @name Agenda#database
  * @function
- * @param url MongoDB server URI
+ * @param url DB server URI
  * @param [collection] name of collection to use. Defaults to `agendaJobs`
  * @param [options] options for connecting
- * @param [cb] callback of MongoDB connection
+ * @param [cb] callback of DB connection
  */
 export const database = function (
   this: Agenda,

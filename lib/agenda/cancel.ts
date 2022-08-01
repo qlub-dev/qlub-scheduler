@@ -4,10 +4,10 @@ import createDebugger from "debug";
 const debug = createDebugger("agenda:cancel");
 
 /**
- * Cancels any jobs matching the passed MongoDB query, and removes them from the database.
+ * Cancels any jobs matching the passed DB query, and removes them from the database.
  * @name Agenda#cancel
  * @function
- * @param query MongoDB query to use when cancelling
+ * @param query DB query to use when cancelling
  * @caller client code, Agenda.purge(), Job.remove()
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,7 +21,7 @@ export const cancel = async function (
     debug("%s jobs cancelled", deletedCount);
     return deletedCount;
   } catch (error) {
-    debug("error trying to delete jobs from MongoDB");
+    debug("error trying to delete jobs from DB");
     throw error;
   }
 };

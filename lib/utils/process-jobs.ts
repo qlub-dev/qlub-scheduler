@@ -95,7 +95,7 @@ export const processJobs = async function (
   }
 
   /**
-   * Internal method that will lock a job and store it on MongoDB
+   * Internal method that will lock a job and store it on DB
    * This method is called when we immediately start to process a job without using the process interval
    * We do this because sometimes jobs are scheduled but will be run before the next process time
    */
@@ -155,8 +155,8 @@ export const processJobs = async function (
       disabled: { [Op.ne]: true },
     };
 
-    // Update / options for the MongoDB query
-    // Lock the job in MongoDB!
+    // Update / options for the DB query
+    // Lock the job in DB!
 
     await jobs
       .update({ lockedAt: now }, { where: criteria, returning: true })
@@ -298,7 +298,7 @@ export const processJobs = async function (
 
           // This means a job has "expired", as in it has not been "touched" within the lockoutTime
           // Remove from local lock
-          // NOTE: Shouldn't we update the 'lockedAt' value in MongoDB so it can be picked up on restart?
+          // NOTE: Shouldn't we update the 'lockedAt' value in DB so it can be picked up on restart?
 
           if (!job.attrs.lockedAt || job.attrs.lockedAt < lockDeadline) {
             debug(

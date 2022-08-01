@@ -3,10 +3,10 @@ import { Agenda } from ".";
 const debug = createDebugger("agenda:disable");
 
 /**
- * Disables any jobs matching the passed MongoDB query by setting the `disabled` flag to `true`
+ * Disables any jobs matching the passed DB query by setting the `disabled` flag to `true`
  * @name Agenda#disable
  * @function
- * @param query MongoDB query to use when enabling
+ * @param query DB query to use when enabling
  * @returns {Promise<number>} Resolved with the number of disabled job instances.
  */
 export const disable = async function (

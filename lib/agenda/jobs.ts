@@ -7,10 +7,10 @@ import { jobs } from "./database";
  * Finds all jobs matching 'query'
  * @name Agenda#jobs
  * @function
- * @param [query] object for MongoDB
- * @param [sort] object for MongoDB
- * @param [limit] number of documents to return from MongoDB
- * @param [number] of documents to skip in MongoDB
+ * @param [query] object for DB
+ * @param [sort] object for DB
+ * @param [limit] number of documents to return from DB
+ * @param [number] of documents to skip in DB
  * @returns resolves when fails or passes
  */
 export const getJobs = async function (

@@ -48,14 +48,14 @@ export const run = async function (this: Job): Promise<Job> {
 
       await this.save().catch((error: Error) => {
         debug(
-          "[%s:%s] failed to be saved to MongoDB",
+          "[%s:%s] failed to be saved to DB",
           this.attrs.name,
           this.attrs.id
         );
         reject(error);
       });
       debug(
-        "[%s:%s] was saved successfully to MongoDB",
+        "[%s:%s] was saved successfully to DB",
         this.attrs.name,
         this.attrs.id
       );

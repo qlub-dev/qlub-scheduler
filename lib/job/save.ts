@@ -1,7 +1,7 @@
 import { Job } from ".";
 
 /**
- * Saves a job into the MongoDB
+ * Saves a job into the DB
  * @name Job#
  * @function
  * @returns instance of Job resolved after job is saved or errors

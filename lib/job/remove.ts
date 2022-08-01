@@ -1,7 +1,7 @@
 import { Job } from ".";
 
 /**
- * Remove the job from MongoDB
+ * Remove the job from DB
  * @name Job#remove
  * @function
  */

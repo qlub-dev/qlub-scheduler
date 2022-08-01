@@ -40,7 +40,7 @@ const processDbResult = async function (
     }
     job.attrs.id = attrs.id;
     job.attrs.nextRunAt = attrs.nextRunAt;
-    // Grab ID and nextRunAt from MongoDB and store it as an attribute on Job
+    // Grab ID and nextRunAt from DB and store it as an attribute on Job
 
     // If the current job would have been processed in an older scan, process the job immediately
     if (job.attrs.nextRunAt && job.attrs.nextRunAt < this._nextScanAt) {
@@ -58,17 +58,17 @@ const processDbResult = async function (
 };
 
 /**
- * Save the properties on a job to MongoDB
+ * Save the properties on a job to DB
  * @name Agenda#saveJob
  * @function
- * @param job job to save into MongoDB
+ * @param job job to save into DB
  * @returns resolves when job is saved or errors
  */
 export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
   try {
     debug("attempting to save a job into Agenda instance");
 
-    // Grab information needed to save job but that we don't want to persist in MongoDB
+    // Grab information needed to save job but that we don't want to persist in DB
     const id = job.attrs.id;
     const { unique, uniqueOpts } = job.attrs;
 
@@ -83,7 +83,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
     props.lastModifiedBy = this._name;
     debug("[job %s] set job props: \n%O", id, props);
 
-    // Grab current time and set default query options for MongoDB
+    // Grab current time and set default query options for DB
     const now = new Date();
     const protect = {};
     debug("current time stored as %s", now.toISOString());
@@ -125,7 +125,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
         delete props.nextRunAt;
       }
 
-      // If we have things to protect, set them in MongoDB using $setOnInsert
+      // If we have things to protect, set them in DB using $setOnInsert
       if (Object.keys(protect).length > 0) {
         props.nextRunAt = protect;
       }
@@ -186,7 +186,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       }
     }
 
-    // If all else fails, the job does not exist yet so we just insert it into MongoDB
+    // If all else fails, the job does not exist yet so we just insert it into DB
     debug(
       "using default behavior, inserting new job via insertOne() with props that were set: \n%O",
       props
