@@ -2,8 +2,8 @@ import * as Sequelize from "sequelize";
 import { DataTypes, Model, Optional } from "sequelize";
 
 export enum ResultStatus {
-  ERROR = "5000",
-  SUCCESS = "2000",
+  ERROR = "500",
+  SUCCESS = "200",
 }
 export interface entityAttributes {
   id: BigInt;
