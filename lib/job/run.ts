@@ -1,5 +1,6 @@
 import createDebugger from "debug";
 import { Job } from ".";
+import { JobStatus } from "../agenda/database";
 
 const debug = createDebugger("agenda:job");
 
@@ -38,7 +39,7 @@ export const run = async function (this: Job): Promise<Job> {
         this.fail(error);
       } else {
         this.attrs.lastFinishedAt = new Date();
-
+        this.attrs.status = JobStatus.RUNNING;
         if (this.attrs.shouldSaveResult && result) {
           this.attrs.result = result;
         }
