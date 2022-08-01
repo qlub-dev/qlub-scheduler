@@ -10,7 +10,7 @@ export const success = async (job: Job<JobAttributesData>): Promise<void> => {
     result_status: ResultStatus.SUCCESS,
     created_at: new Date(),
   };
-  JobLog.create<any>(success_log).then((error) =>
+  JobLog.create<any>(success_log).catch((error) =>
     console.log("JobLog Success Create Error: ", error)
   );
 };

@@ -22,6 +22,7 @@ class SchedulerService {
     SchedulerService._jobLogService = new JobLogServiceImpl(
       SchedulerService._agenda._db
     );
+    SchedulerService._agenda.start();
     SchedulerService._agenda.on("start", (job) => {
       JobLogServiceImpl.start(job);
     });
