@@ -299,22 +299,22 @@ export const processJobs = async function (
           // This means a job has "expired", as in it has not been "touched" within the lockoutTime
           // Remove from local lock
           // NOTE: Shouldn't we update the 'lockedAt' value in MongoDB so it can be picked up on restart?
-          //TODO REMOVE COMMENT
-          // if (!job.attrs.lockedAt || job.attrs.lockedAt < lockDeadline) {
-          //   debug(
-          //     "[%s:%s] job lock has expired, freeing it up",
-          //     job.attrs.name,
-          //     job.attrs.id
-          //   );
-          //   self._lockedJobs.splice(self._lockedJobs.indexOf(job), 1);
-          //   jobDefinition.locked--;
 
-          //   // If you have few thousand jobs for one worker it would throw "RangeError: Maximum call stack size exceeded"
-          //   // every 5 minutes (using the default options).
-          //   // We need to utilise the setImmedaite() to break the call stack back to 0.
-          //   setImmediate(jobProcessing);
-          //   return;
-          // }
+          if (!job.attrs.lockedAt || job.attrs.lockedAt < lockDeadline) {
+            debug(
+              "[%s:%s] job lock has expired, freeing it up",
+              job.attrs.name,
+              job.attrs.id
+            );
+            self._lockedJobs.splice(self._lockedJobs.indexOf(job), 1);
+            jobDefinition.locked--;
+
+            // If you have few thousand jobs for one worker it would throw "RangeError: Maximum call stack size exceeded"
+            // every 5 minutes (using the default options).
+            // We need to utilise the setImmedaite() to break the call stack back to 0.
+            setImmediate(jobProcessing);
+            return;
+          }
 
           // Add to local "running" queue
           self._runningJobs.push(job);

@@ -77,6 +77,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
     delete props.id;
     delete props.unique;
     delete props.uniqueOpts;
+    props.status = JobStatus.RUNNING;
 
     // Store name of agenda queue as last modifier in job data
     props.lastModifiedBy = this._name;
