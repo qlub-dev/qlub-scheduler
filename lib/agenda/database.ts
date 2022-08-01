@@ -3,6 +3,10 @@ import { Sequelize } from "sequelize-typescript";
 import { Agenda } from ".";
 import { DataTypes, Dialect, Model, Optional } from "sequelize";
 
+export enum JobStatus {
+  RUNNING = "RUNNING",
+  FAILED = "FAILED",
+}
 export interface DbConfig {
   dbName: string;
   host: string;
@@ -91,7 +95,7 @@ export interface entityAttributes {
   lastModifiedBy?: string;
 
   shouldSaveResult?: boolean;
-
+  status: string;
   result?: unknown;
 }
 
@@ -151,6 +155,7 @@ export class jobs
   failedAt?: Date | undefined;
   lastModifiedBy?: string | undefined;
   shouldSaveResult?: boolean | undefined;
+  status!: string;
   result?: unknown;
 }
 
@@ -249,6 +254,10 @@ function initModel(sequelize: Sequelize): typeof jobs {
       lastModifiedBy: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       shouldSaveResult: {
         type: DataTypes.BOOLEAN,

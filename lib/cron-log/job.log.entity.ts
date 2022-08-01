@@ -1,6 +1,10 @@
-import { Sequelize } from "sequelize-typescript";
-import { DataTypes, Model, Optional } from "sequelize/types";
+import * as Sequelize from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 
+export enum ResultStatus {
+  ERROR = "5000",
+  SUCCESS = "2000",
+}
 export interface entityAttributes {
   id: BigInt;
   job_name: string;
@@ -10,19 +14,19 @@ export interface entityAttributes {
   result_status: string;
   fail_reason?: string | undefined;
   cancelled_at?: Date | undefined;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
 export type entityPk = "id";
-export type entityId = job_log[entityPk];
-export type entityOptionalAttributes = "fail_reason";
+export type entityId = JobLog[entityPk];
+export type entityOptionalAttributes = "fail_reason" | "cancelled_at";
 export type entityCreationAttributes = Optional<
   entityAttributes,
   entityOptionalAttributes
 >;
 
-export class job_log
+export class JobLog
   extends Model<entityAttributes, entityCreationAttributes>
   implements entityAttributes
 {
@@ -34,12 +38,12 @@ export class job_log
   result_status!: string;
   fail_reason?: string | undefined;
   cancelled_at?: Date | undefined;
-  created_at!: Date;
-  updated_at!: Date;
+  createdAt!: Date;
+  updatedAt?: Date;
 }
 
-function initModel(sequelize: Sequelize): typeof job_log {
-  return job_log.init(
+export function initModel(sequelize: Sequelize.Sequelize): typeof JobLog {
+  return JobLog.init(
     {
       id: {
         autoIncrement: true,
@@ -67,6 +71,7 @@ function initModel(sequelize: Sequelize): typeof job_log {
       },
       job: {
         type: DataTypes.JSON,
+        allowNull: false,
         defaultValue: true,
       },
       result_status: {
@@ -81,13 +86,13 @@ function initModel(sequelize: Sequelize): typeof job_log {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      created_at: {
+      createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
       },
-      updated_at: {
+      updatedAt: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
@@ -100,6 +105,11 @@ function initModel(sequelize: Sequelize): typeof job_log {
           name: "job_log_pkey",
           unique: true,
           fields: [{ name: "id" }],
+        },
+        {
+          name: "job_fkey",
+          unique: true,
+          fields: [{ name: "job_id" }],
         },
       ],
     }

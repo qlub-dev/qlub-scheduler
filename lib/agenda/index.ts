@@ -1,7 +1,9 @@
 import { EventEmitter } from "events";
 import humanInterval from "human-interval";
-import { Sequelize, SequelizeOptions } from "sequelize-typescript";
+import { Sequelize } from "sequelize-typescript";
+import { JobLogService } from "../cron-log/job.log.service";
 import { Job } from "../job";
+import { repeatAt } from "../job/repeat-at";
 import { cancel } from "./cancel";
 import { close } from "./close";
 import { create } from "./create";
@@ -89,6 +91,7 @@ class Agenda extends EventEmitter {
   _table!: jobs;
   _nextScanAt: any;
   _processInterval: any;
+  _jobLogService?: JobLogService;
 
   cancel!: typeof cancel;
   close!: typeof close;
@@ -114,14 +117,20 @@ class Agenda extends EventEmitter {
   sort!: typeof sort;
   start!: typeof start;
   stop!: typeof stop;
+  repetAt!: typeof repeatAt;
 
   /**
    * Constructs a new Agenda object.
    * @param config Optional configuration to initialize the Agenda.
    * @param cb Optional callback called with the MongoDB collection.
    */
-  constructor(config: AgendaConfig, cb?: (error: Error | undefined) => void) {
+  constructor(
+    config: AgendaConfig,
+    cb?: (error: Error | undefined) => void,
+    jobLogService?: JobLogService
+  ) {
     super();
+    this._jobLogService = jobLogService;
     this._name = config.name;
     this._processEvery = (humanInterval(config.processEvery) ??
       humanInterval("5 seconds")) as number; // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style

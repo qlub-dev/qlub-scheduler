@@ -2,6 +2,7 @@ import createDebugger from "debug";
 import { Agenda } from ".";
 import { Job } from "../job";
 import { processJobs } from "../utils";
+import { JobStatus } from "./database";
 
 const debug = createDebugger("agenda:saveJob");
 
@@ -98,8 +99,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
           where: { id },
           returning: true,
         });
-        if (result)
-          return await processDbResult.call(this, job, result[0]?.dataValues);
+        return await processDbResult.call(this, job, result[0]?.dataValues);
       }
     }
 
@@ -144,8 +144,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
           },
           returning: true,
         });
-        if (result)
-          return await processDbResult.call(this, job, result[0]?.dataValues);
+        return await processDbResult.call(this, job, result[0]?.dataValues);
       }
     }
 
@@ -176,10 +175,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       "using default behavior, inserting new job via insertOne() with props that were set: \n%O",
       props
     );
-    props.agenda = props.agenda ? props.agenda : {};
-    props.data = props.data ? props.data : {};
-    props.unique = props.unique ? props.unique : true;
-    props.uniqueOpts = props.uniqueOpts ? props.uniqueOpts : {};
+    props.status = JobStatus.RUNNING;
     const result = await this.jobs
       .create<any>(props)
       .catch((err) => console.log("err: ", err));

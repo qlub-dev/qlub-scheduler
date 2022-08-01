@@ -1,6 +1,10 @@
-import { Agenda, JobPriority } from "agenda";
-const agenda = new Agenda(
-  {
+import { SchedulerService } from "agenda";
+function time() {
+  return new Date().toTimeString().split(" ")[0];
+}
+
+export default async function CronJob() {
+  const scheduler = SchedulerService.instanciateScheduler({
     name: "qlub",
     db: {
       dbName: "local-cron",
@@ -10,51 +14,42 @@ const agenda = new Agenda(
       port: 5432,
       dialect: "postgres",
     },
-  },
-  (error) => {
-    console.log("Error: ", error);
-  }
-);
+  });
 
-agenda.define(
-  "test cron",
-  {
-    concurrency: 3,
-    lockLifetime: 5 * 100,
-    priority: 10,
-    shouldSaveResult: true,
-  },
-  async (job, done) => {
-    console.log(
-      "SUCCESS: >>>>>>>>> ",
-      job.attrs.name,
-      ",now: ",
-      new Date(),
-      ", nextRunTime: ",
-      job.attrs.nextRunAt
-    );
-    done();
-  }
-);
+  scheduler.define(
+    "qlub notification cron",
+    {
+      concurrency: 3,
+      lockLifetime: 5 * 100,
+      priority: 10,
+      shouldSaveResult: true,
+    },
+    async (job, done) => {
+      console.log(
+        "SUCCESS: >>>>>>>>> ",
+        job.attrs.name,
+        ",now: ",
+        new Date(),
+        ", nextRunTime: ",
+        job.attrs.nextRunAt
+      );
+      done();
+    }
+  );
 
-function time() {
-  return new Date().toTimeString().split(" ")[0];
-}
+  await scheduler.start();
+  await scheduler.every("* * * * * *", "test cron");
 
-export default async function CronJob() {
-  await agenda.start();
-  await agenda.every("* * * * * *", "test cron");
-
-  agenda.on("ready", () => {
+  scheduler.on("ready", () => {
     console.log("ready");
   });
-  agenda.on("start", (job) => {
+  scheduler.on("start", (job) => {
     console.log(time(), `Job <${job.attrs.name}> starting`);
   });
-  agenda.on("success", (job) => {
+  scheduler.on("success", (job) => {
     console.log(time(), `Job <${job.attrs.name}> succeeded`);
   });
-  agenda.on("fail", (error, job) => {
+  scheduler.on("fail", (error, job) => {
     console.log(time(), `Job <${job.attrs.name}> failed:`, error);
   });
 }
