@@ -300,7 +300,7 @@ export const processJobs = async function (
           // Remove from local lock
           // NOTE: Shouldn't we update the 'lockedAt' value in DB so it can be picked up on restart?
 
-          if (!job.attrs.lockedAt || job.attrs.lockedAt < lockDeadline) {
+          if (job.attrs.lockedAt && job.attrs.lockedAt < lockDeadline) {
             debug(
               "[%s:%s] job lock has expired, freeing it up",
               job.attrs.name,
