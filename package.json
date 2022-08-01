@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "agenda",
+  "name": "qlub-scheduler",
   "version": "4.3.0",
   "description": "Light weight job scheduler for Node.js",
   "main": "dist/cjs.js",
