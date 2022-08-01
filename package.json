@@ -23,6 +23,9 @@
     "predocs": "npm run build",
     "docs": "jsdoc --configure .jsdoc.json --verbose ./dist"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "config": {
     "blanket": {
       "pattern": "lib",
