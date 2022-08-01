@@ -96,10 +96,15 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
         "job already has _id, calling findOneAndUpdate() using _id as query"
       );
       if (await this.jobs.findOne({ where: { id } })) {
-        const [_, result]: [any, any] = await this.jobs.update(props, {
-          where: { id },
-          returning: true,
-        });
+        const [_, result]: [number, any] = await this.jobs
+          .update(props, {
+            where: { id },
+            returning: true,
+          })
+          .catch((error) => {
+            console.log("Job save error occured: ", error);
+            return error;
+          });
         return await processDbResult.call(this, job, result[0]?.dataValues);
       }
     }
@@ -138,13 +143,18 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
           },
         })
       ) {
-        const [_, result]: [number, any] = await this.jobs.update(props, {
-          where: {
-            name: props.name,
-            type: "single",
-          },
-          returning: true,
-        });
+        const [_, result]: [number, any] = await this.jobs
+          .update(props, {
+            where: {
+              name: props.name,
+              type: "single",
+            },
+            returning: true,
+          })
+          .catch((error) => {
+            console.log("Job save error occured: ", error);
+            return error;
+          });
         return await processDbResult.call(this, job, result[0]?.dataValues);
       }
     }
@@ -163,10 +173,15 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
           where: query,
         })
       ) {
-        const [_, result]: [any, any] = await this.jobs.update(props, {
-          where: query,
-          returning: true,
-        });
+        const [_, result]: [any, any] = await this.jobs
+          .update(props, {
+            where: query,
+            returning: true,
+          })
+          .catch((error) => {
+            console.log("Job save error occured: ", error);
+            return error;
+          });
         return await processDbResult.call(this, job, result[0]?.dataValues);
       }
     }
@@ -177,9 +192,10 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       props
     );
     props.status = JobStatus.RUNNING;
-    const result = await this.jobs
-      .create<any>(props)
-      .catch((err) => console.log("err: ", err));
+    const result = await this.jobs.create<any>(props).catch((error) => {
+      console.log("Job create error occured: ", error);
+      return error;
+    });
     return await processDbResult.call(this, job, result?.dataValues);
   } catch (error) {
     debug("processDbResult() received an error, job was not updated/created");
