@@ -9,3 +9,4 @@ Makefile
 renovate.json
 test
 yarn.lock
+lib/**
