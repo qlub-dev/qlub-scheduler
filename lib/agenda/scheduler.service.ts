@@ -27,10 +27,12 @@ class SchedulerService {
       JobLogServiceImpl.start(job);
     });
     SchedulerService._agenda.on("success", (job) => {
-      JobLogServiceImpl.success(job);
+      if (job.agenda._definitions[job.attrs.name].logging)
+        JobLogServiceImpl.success(job);
     });
     SchedulerService._agenda.on("fail", (error, job) => {
-      JobLogServiceImpl.fail(error, job);
+      if (job.agenda._definitions[job.attrs.name].logging)
+        JobLogServiceImpl.fail(error, job);
     });
     return SchedulerService._agenda;
   }
