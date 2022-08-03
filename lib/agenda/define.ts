@@ -39,6 +39,8 @@ export interface DefineOptions {
    * Should the return value of the job be persisted
    */
   shouldSaveResult?: boolean;
+
+  logging?: boolean;
 }
 
 export type Processor =
@@ -75,7 +77,10 @@ export const define = function (
       (options as DefineOptions).lockLifetime || this._defaultLockLifetime,
     running: 0,
     locked: 0,
-    shouldSaveResult: (options as DefineOptions).shouldSaveResult || false
+    shouldSaveResult: (options as DefineOptions).shouldSaveResult || false,
+    logging: (options as DefineOptions).logging
+      ? (options as DefineOptions).logging
+      : true,
   };
   debug(
     "job [%s] defined with following options: \n%O",

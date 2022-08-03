@@ -4,7 +4,7 @@ function time() {
 }
 
 export default async function CronJob() {
-  const scheduler = SchedulerService.instanciateScheduler({
+  SchedulerService.instanciateScheduler({
     name: "qlub",
     db: {
       dbName: "local-cron",
@@ -16,6 +16,7 @@ export default async function CronJob() {
     },
   });
 
+  const scheduler = SchedulerService.getScheduler();
   scheduler.define(
     "qlub notification cron",
     {
@@ -37,12 +38,8 @@ export default async function CronJob() {
     }
   );
 
-  await scheduler.start();
-  await scheduler.every("* * * * * *", "test cron");
+  await scheduler.every("* * * * * *", "qlub notification cron");
 
-  scheduler.on("ready", () => {
-    console.log("ready");
-  });
   scheduler.on("start", (job) => {
     console.log(time(), `Job <${job.attrs.name}> starting`);
   });
