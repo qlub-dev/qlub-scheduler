@@ -78,9 +78,10 @@ export const define = function (
     running: 0,
     locked: 0,
     shouldSaveResult: (options as DefineOptions)?.shouldSaveResult || false,
-    logging: (options as DefineOptions)?.logging
-      ? (options as DefineOptions).logging
-      : true,
+    logging:
+      (options as DefineOptions)?.logging != null
+        ? (options as DefineOptions).logging
+        : true,
   };
   debug(
     "job [%s] defined with following options: \n%O",
