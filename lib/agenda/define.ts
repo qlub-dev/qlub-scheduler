@@ -70,15 +70,15 @@ export const define = function (
   this._definitions[name] = {
     fn: processor,
     concurrency:
-      (options as DefineOptions).concurrency || this._defaultConcurrency, // `null` is per interface definition of DefineOptions not valid
-    lockLimit: (options as DefineOptions).lockLimit || this._defaultLockLimit,
-    priority: (options as DefineOptions).priority || JobPriority.normal,
+      (options as DefineOptions)?.concurrency || this._defaultConcurrency, // `null` is per interface definition of DefineOptions not valid
+    lockLimit: (options as DefineOptions)?.lockLimit || this._defaultLockLimit,
+    priority: (options as DefineOptions)?.priority || JobPriority.normal,
     lockLifetime:
-      (options as DefineOptions).lockLifetime || this._defaultLockLifetime,
+      (options as DefineOptions)?.lockLifetime || this._defaultLockLifetime,
     running: 0,
     locked: 0,
-    shouldSaveResult: (options as DefineOptions).shouldSaveResult || false,
-    logging: (options as DefineOptions).logging
+    shouldSaveResult: (options as DefineOptions)?.shouldSaveResult || false,
+    logging: (options as DefineOptions)?.logging
       ? (options as DefineOptions).logging
       : true,
   };
