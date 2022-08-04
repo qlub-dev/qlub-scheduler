@@ -6,9 +6,10 @@ import { DbConfig } from "./database";
 class SchedulerService {
   private static _agenda: Agenda;
   private static _jobLogService: JobLogService;
-  private constructor() {}
+  public constructor() {}
 
-  static instanciateScheduler(name: string, db: DbConfig): Agenda {
+  static instanciateScheduler(param: { name: string; db: DbConfig }): Agenda {
+    const { name, db } = param;
     if (SchedulerService._agenda) return SchedulerService._agenda;
     SchedulerService._agenda = new Agenda(
       {
