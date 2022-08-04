@@ -19,7 +19,7 @@ export class AgendaService extends SchedulerService {}
     {
       provide: AgendaService,
       useFactory: async (options) => {
-        return SchedulerService.instanciateScheduler(options);
+        return new SchedulerService(options);
       },
       inject: [AGENDA_MODULE_OPTIONS],
     },

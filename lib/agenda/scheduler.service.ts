@@ -4,14 +4,12 @@ import { JobLogServiceImpl } from "../cron-log/job.log.service.impl";
 import { DbConfig } from "./database";
 
 class SchedulerService {
-  private static _agenda: Agenda;
-  private static _jobLogService: JobLogService;
-  public constructor() {}
+  _agenda: Agenda | undefined;
+  _jobLogService: JobLogService | undefined;
 
-  static instanciateScheduler(param: { name: string; db: DbConfig }): Agenda {
+  constructor(param: { name: string; db: DbConfig }) {
     const { name, db } = param;
-    if (SchedulerService._agenda) return SchedulerService._agenda;
-    SchedulerService._agenda = new Agenda(
+    this._agenda = new Agenda(
       {
         name,
         db,
@@ -20,30 +18,27 @@ class SchedulerService {
         console.log("Error: ", error);
       }
     );
-    SchedulerService._jobLogService = new JobLogServiceImpl(
-      SchedulerService._agenda._db
-    );
-    SchedulerService._agenda.start();
-    SchedulerService._agenda.on("start", (job) => {
+    this._jobLogService = new JobLogServiceImpl(this._agenda._db);
+    this._agenda.start();
+    this._agenda.on("start", (job) => {
       JobLogServiceImpl.start(job);
     });
-    SchedulerService._agenda.on("success", (job) => {
+    this._agenda.on("success", (job) => {
       if (job.agenda._definitions[job.attrs.name].logging)
         JobLogServiceImpl.success(job);
     });
-    SchedulerService._agenda.on("fail", (error, job) => {
+    this._agenda.on("fail", (error, job) => {
       if (job.agenda._definitions[job.attrs.name].logging)
         JobLogServiceImpl.fail(error, job);
     });
-    return SchedulerService._agenda;
   }
 
-  static getScheduler() {
-    return SchedulerService._agenda;
+  getScheduler() {
+    return this._agenda;
   }
 
-  static getJobLogService() {
-    return SchedulerService._jobLogService;
+  getJobLogService() {
+    return this._jobLogService;
   }
 }
 
