@@ -12,14 +12,22 @@ function createAgendaProvider(options: AgendaModuleOptions): any[] {
   return [{ provide: AGENDA_MODULE_OPTIONS, useValue: options || {} }];
 }
 
-export class AgendaService extends SchedulerService {}
+export class AgendaService extends Agenda {}
 
 @Module({
   providers: [
     {
       provide: AgendaService,
-      useFactory: async (options) => {
-        return new SchedulerService(options);
+      useFactory: async ({ name, db }) => {
+        return new Agenda(
+          {
+            name,
+            db,
+          },
+          (error) => {
+            console.log("Error: ", error);
+          }
+        );
       },
       inject: [AGENDA_MODULE_OPTIONS],
     },
