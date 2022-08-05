@@ -18,16 +18,10 @@ export class AgendaService extends Agenda {}
   providers: [
     {
       provide: AgendaService,
-      useFactory: async ({ name, db }) => {
-        return new Agenda(
-          {
-            name,
-            db,
-          },
-          (error) => {
-            console.log("Error: ", error);
-          }
-        );
+      useFactory: async (options: AgendaModuleOptions) => {
+        return new Agenda(options, (error) => {
+          console.log("Error: ", error);
+        });
       },
       inject: [AGENDA_MODULE_OPTIONS],
     },
