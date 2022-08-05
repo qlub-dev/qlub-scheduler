@@ -1,7 +1,9 @@
 // old common js export (see index.ts for module exports)
 
-import { Agenda } from "./agenda";
-import { SchedulerService } from "./agenda/scheduler.service";
-module.exports = Agenda;
-module.exports.Agenda = Agenda;
-module.exports.SchedulerService = SchedulerService;
+export { Agenda } from "./agenda";
+export { SchedulerService } from "./agenda/scheduler.service";
+export {
+  QSchedulerExpression,
+  EVERY_FIRST_DAY_OF_MOUNTH_AT,
+  EVERY_DAY_AT,
+} from "../lib/utils/QSchedulerExpression";
