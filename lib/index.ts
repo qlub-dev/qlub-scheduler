@@ -1,7 +1,6 @@
 // module export, beware: cjs.ts is exported as main entry point!
 export * from "./agenda";
 export * from "./job";
-export * from "./module";
 
 export { DefineOptions, JobPriority, Processor } from "./agenda/define";
 export { JobOptions } from "./job/repeat-every";
@@ -11,7 +10,5 @@ export { Agenda };
 
 import { SchedulerService } from "./agenda/scheduler.service";
 export { SchedulerService };
-
-export { AgendaModule } from "./module/scheduler.module";
 
 export default SchedulerService;
