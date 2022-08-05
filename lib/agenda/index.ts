@@ -133,7 +133,7 @@ class Agenda extends EventEmitter {
     this._jobLogService = jobLogService;
     this._name = config.name;
     this._processEvery = (humanInterval(config.processEvery) ??
-      humanInterval("5 seconds")) as number; // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style
+      humanInterval("1 seconds")) as number; // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style
     this._defaultConcurrency = config.defaultConcurrency || 5;
     this._maxConcurrency = config.maxConcurrency || 20;
     this._defaultLockLimit = config.defaultLockLimit || 0;
