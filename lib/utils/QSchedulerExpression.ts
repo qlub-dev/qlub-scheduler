@@ -85,8 +85,8 @@ export enum QSchedulerExpression {
 }
 
 export interface Time {
-  clock: bigint;
-  minute: bigint;
+  clock: number;
+  minute: number;
 }
 function checkTime(time: Time) {
   if (time.minute > 60) {
@@ -104,4 +104,9 @@ export function EVERY_FIRST_DAY_OF_MOUNTH_AT(time: Time) {
 export function EVERY_DAY_AT(time: Time) {
   checkTime(time);
   return `${time.minute} ${time.clock} * * *`;
+}
+
+export function EVERY_WEEK_AT(time: Time) {
+  checkTime(time);
+  return `${time.minute} ${time.clock} * * 1`;
 }
