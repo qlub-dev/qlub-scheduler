@@ -29,7 +29,7 @@ export class JobLogServiceImpl implements JobLogService {
   }
   async getJobs(pagination: Pagination): Promise<any> {
     return jobs.findAll({
-      attributes: ["id", "name", "agenda", "type", "status"],
+      attributes: ["id", "name", "type", "status"],
       limit: PAGE_LIMIT,
       offset: pagination.pageNumber * PAGE_LIMIT,
       order: [[pagination.sortBy, pagination.direction]],
@@ -37,7 +37,7 @@ export class JobLogServiceImpl implements JobLogService {
   }
   async getJobLogs(cronDetail: JobDetail): Promise<any> {
     return JobLog.findAll({
-      attributes: ["id", "job_name", "result_satatus"],
+      attributes: ["id", "job_name", "result_status"],
       where: {
         job_id: cronDetail.id,
       },
