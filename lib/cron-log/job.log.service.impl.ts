@@ -41,6 +41,7 @@ export class JobLogServiceImpl implements JobLogService {
         "createdAt",
       ],
       plain: true,
+      raw: true,
       limit: PAGE_LIMIT,
       offset: pagination.pageNumber * PAGE_LIMIT,
       order: [[pagination.sortBy, pagination.direction]],
@@ -60,6 +61,7 @@ export class JobLogServiceImpl implements JobLogService {
       where: {
         job_id: cronDetail.id,
       },
+      raw: true,
       plain: true,
       limit: PAGE_LIMIT,
       offset: cronDetail.pageNumber * PAGE_LIMIT,
