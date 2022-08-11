@@ -4,8 +4,8 @@ import { JobLogServiceImpl } from "../cron-log/job.log.service.impl";
 import { DbConfig } from "./database";
 
 class SchedulerService {
-  _agenda: Agenda | undefined;
-  _jobLogService: JobLogService | undefined;
+  private _agenda: Agenda | undefined;
+  private _jobLogService: JobLogService | undefined;
 
   constructor(param: { name: string; db: DbConfig }) {
     const { name, db } = param;

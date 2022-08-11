@@ -1,12 +1,10 @@
 // module export, beware: cjs.ts is exported as main entry point!
-export * from "./agenda";
 export * from "./job";
 export * from "./utils/QSchedulerExpression";
 
 export { DefineOptions, JobPriority, Processor } from "./agenda/define";
 export { JobOptions } from "./job/repeat-every";
 
-export { Agenda } from "./agenda";
 export { SchedulerService } from "./agenda/scheduler.service";
 export {
   QSchedulerExpression,

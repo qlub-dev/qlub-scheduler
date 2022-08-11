@@ -1,6 +1,5 @@
 // old common js export (see index.ts for module exports)
 
-export { Agenda } from "./agenda";
 export { SchedulerService } from "./agenda/scheduler.service";
 export {
   QSchedulerExpression,
