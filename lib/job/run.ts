@@ -16,12 +16,11 @@ export const run = async function (this: Job): Promise<Job> {
   // @TODO: this lint issue should be looked into: https://eslint.org/docs/rules/no-async-promise-executor
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
-    this.attrs.lastRunAt = new Date();
     debug(
       "[%s:%s] setting lastRunAt to: %s",
       this.attrs.name,
       this.attrs.id,
-      this.attrs.lastRunAt.toISOString()
+      this.attrs?.lastRunAt?.toISOString()
     );
     this.computeNextRunAt();
     await this.save();
@@ -44,7 +43,7 @@ export const run = async function (this: Job): Promise<Job> {
           this.attrs.result = result;
         }
       }
-
+      this.attrs.lastRunAt = new Date();
       this.attrs.lockedAt = null;
 
       await this.save().catch((error: Error) => {
