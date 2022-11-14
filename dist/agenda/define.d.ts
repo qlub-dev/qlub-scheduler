@@ -42,5 +42,5 @@ export declare type Processor = ((job: Job) => Promise<void>) | ((job: Job, done
  * @param options options for job to run
  * @param [processor] function to be called to run actual job
  */
-export declare const define: (this: Agenda, name: string, options: DefineOptions | Processor, processor?: Processor) => void;
+export declare const define: (this: Agenda, name: string, options: DefineOptions | Processor, processor?: Processor | undefined) => void;
 //# sourceMappingURL=define.d.ts.map

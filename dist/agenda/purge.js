@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.purge = void 0;
 const debug_1 = __importDefault(require("debug"));
 const sequelize_1 = require("sequelize");
-const debug = (0, debug_1.default)("agenda:purge");
+const debug = debug_1.default("agenda:purge");
 /**
  * Removes all jobs from queue
  * @name Agenda#purge

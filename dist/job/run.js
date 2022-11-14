@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
 const debug_1 = __importDefault(require("debug"));
 const database_1 = require("../agenda/database");
-const debug = (0, debug_1.default)("agenda:job");
+const debug = debug_1.default("agenda:job");
 /**
  * Internal method (RUN)
  * @name Job#run

@@ -16,7 +16,7 @@ exports.findAndLockNextJob = void 0;
 const debug_1 = __importDefault(require("debug"));
 const utils_1 = require("../utils");
 const sequelize_1 = require("sequelize");
-const debug = (0, debug_1.default)("agenda:internal:_findAndLockNextJob");
+const debug = debug_1.default("agenda:internal:_findAndLockNextJob");
 /**
  * Find and lock jobs
  * @name Agenda#findAndLockNextJob
@@ -66,7 +66,7 @@ const findAndLockNextJob = function (jobName, definition) {
         if (updated) {
             updated.lockedAt = now;
             this.jobs.update(updated, { where: { name: jobName } });
-            job = (0, utils_1.createJob)(this, updated === null || updated === void 0 ? void 0 : updated.dataValues);
+            job = utils_1.createJob(this, updated === null || updated === void 0 ? void 0 : updated.dataValues);
         }
         // @ts-ignore
         return job;

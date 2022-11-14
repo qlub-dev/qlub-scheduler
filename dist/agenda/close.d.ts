@@ -12,5 +12,5 @@ import { Agenda } from ".";
  */
 export declare const close: (this: Agenda, option?: {
     force: boolean;
-}) => Promise<Agenda>;
+} | undefined) => Promise<Agenda>;
 //# sourceMappingURL=close.d.ts.map

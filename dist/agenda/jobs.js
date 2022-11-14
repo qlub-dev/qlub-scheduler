@@ -30,7 +30,7 @@ const getJobs = function (query, sort = ["id", "DESC"], limit = 0, skip = 0) {
             order: sort,
             offset: skip,
         }); // eslint-disable-line;
-        return result.map((job) => (0, utils_1.createJob)(this, job));
+        return result.map((job) => utils_1.createJob(this, job));
     });
 };
 exports.getJobs = getJobs;

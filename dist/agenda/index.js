@@ -64,7 +64,7 @@ class Agenda extends events_1.EventEmitter {
         this._findAndLockNextJob = find_and_lock_next_job_1.findAndLockNextJob;
         this._jobLogService = jobLogService;
         this._name = config.name;
-        this._processEvery = ((_a = (0, human_interval_1.default)(config.processEvery)) !== null && _a !== void 0 ? _a : (0, human_interval_1.default)("1 seconds")); // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style
+        this._processEvery = ((_a = human_interval_1.default(config.processEvery)) !== null && _a !== void 0 ? _a : human_interval_1.default("1 seconds")); // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style
         this._defaultConcurrency = config.defaultConcurrency || 5;
         this._maxConcurrency = config.maxConcurrency || 20;
         this._defaultLockLimit = config.defaultLockLimit || 0;

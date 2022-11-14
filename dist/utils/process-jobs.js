@@ -17,7 +17,7 @@ const debug_1 = __importDefault(require("debug"));
 const create_job_1 = require("./create-job");
 const database_1 = require("../agenda/database");
 const sequelize_1 = require("sequelize");
-const debug = (0, debug_1.default)("agenda:internal:processJobs");
+const debug = debug_1.default("agenda:internal:processJobs");
 /**
  * Process methods for jobs
  * @param {Job} extraJob job to run immediately
@@ -142,7 +142,7 @@ const processJobs = function (extraJob) {
                     .update({ lockedAt: now }, { where: criteria, returning: true })
                     .then(([rowsUpdate, updated]) => {
                     if (updated) {
-                        const job = (0, create_job_1.createJob)(self, updated[0].dataValues);
+                        const job = create_job_1.createJob(self, updated[0].dataValues);
                         debug("found job [%s:%s] that can be locked on the fly", job.attrs.name, job.attrs.id);
                         self._lockedJobs.push(job);
                         definitions[job.attrs.name].locked++;

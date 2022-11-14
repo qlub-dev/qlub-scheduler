@@ -20,7 +20,7 @@ const success_1 = require("./success");
 class JobLogServiceImpl {
     constructor(sequelize) {
         this._db = sequelize;
-        this._job_log = (0, job_log_entity_1.initModel)(this._db);
+        this._job_log = job_log_entity_1.initModel(this._db);
     }
     getJobs(pagination) {
         return __awaiter(this, void 0, void 0, function* () {

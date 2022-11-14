@@ -10,5 +10,5 @@ import { JobOptions } from "../job/repeat-every";
  * @param options - options to run job for
  * @returns Job/s created. Resolves when schedule fails or passes
  */
-export declare const every: (this: Agenda, interval: string, names: string | string[], data?: unknown, options?: JobOptions) => Promise<any>;
+export declare const every: (this: Agenda, interval: string, names: string | string[], data?: unknown, options?: JobOptions | undefined) => Promise<any>;
 //# sourceMappingURL=every.d.ts.map
