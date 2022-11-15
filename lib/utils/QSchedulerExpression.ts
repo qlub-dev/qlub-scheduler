@@ -85,28 +85,30 @@ export enum QSchedulerExpression {
 }
 
 export interface Time {
-  clock: number;
+  hour: number;
   minute: number;
 }
+
 function checkTime(time: Time) {
   if (time.minute > 60) {
     throw new Error("Minute cannot be bigger than 60");
   }
-  if (time.clock > 24) {
+  if (time.hour > 24) {
     throw new Error("Clock cannot be bigger than 24");
   }
 }
-export function EVERY_FIRST_DAY_OF_MOUNTH_AT(time: Time) {
+
+export function EVERY_FIRST_DAY_OF_MONTH_AT(time: Time) {
   checkTime(time);
-  return `${time.minute} ${time.clock} 1 * *`;
+  return `${time.minute} ${time.hour} 1 * *`;
 }
 
 export function EVERY_DAY_AT(time: Time) {
   checkTime(time);
-  return `${time.minute} ${time.clock} * * *`;
+  return `${time.minute} ${time.hour} * * *`;
 }
 
 export function EVERY_WEEK_AT(time: Time) {
   checkTime(time);
-  return `${time.minute} ${time.clock} * * 1`;
+  return `${time.minute} ${time.hour} * * 1`;
 }

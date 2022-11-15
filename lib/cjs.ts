@@ -3,7 +3,7 @@
 export { SchedulerService } from "./agenda/scheduler.service";
 export {
   QSchedulerExpression,
-  EVERY_FIRST_DAY_OF_MOUNTH_AT,
+  EVERY_FIRST_DAY_OF_MONTH_AT,
   EVERY_DAY_AT,
   Time,
 } from "./utils/QSchedulerExpression";
