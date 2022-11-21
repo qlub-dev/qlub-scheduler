@@ -1,5 +1,6 @@
 // module export, beware: cjs.ts is exported as main entry point!
 export * from "./job";
+export * from "./cron-log";
 export * from "./utils/QSchedulerExpression";
 
 export { DefineOptions, JobPriority, Processor } from "./agenda/define";

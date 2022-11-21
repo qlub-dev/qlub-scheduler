@@ -18,8 +18,6 @@ export interface entityAttributes {
   updatedAt?: Date;
 }
 
-export type entityPk = "id";
-export type entityId = JobLog[entityPk];
 export type entityOptionalAttributes = "fail_reason" | "cancelled_at";
 export type entityCreationAttributes = Optional<
   entityAttributes,

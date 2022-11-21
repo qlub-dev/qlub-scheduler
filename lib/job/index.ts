@@ -17,8 +17,6 @@ import { setShouldSaveResult } from "./set-shouldsaveresult";
 import { parsePriority } from "../utils";
 import { Agenda } from "../agenda";
 import { JobPriority } from "../agenda/define";
-import Sequelize, { DataTypes, Model, Optional } from "sequelize";
-import { jobs } from "../agenda/database";
 
 export interface JobAttributesData {
   [key: string]: any;
@@ -88,7 +86,7 @@ class Job<T extends JobAttributesData = JobAttributesData> {
       name: attrs.name || "",
       priority: attrs.priority,
       type: type || "once",
-      nextRunAt: nextRunAt || new Date(),
+      nextRunAt: nextRunAt || new Date()
     };
   }
 }
