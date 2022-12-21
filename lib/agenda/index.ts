@@ -41,7 +41,7 @@ export interface AgendaConfig {
   defaultLockLifetime?: number;
   sort?: any;
   seq?: Sequelize;
-  db: DbConfig;
+  db: Sequelize;
   disableAutoIndex?: boolean;
 }
 

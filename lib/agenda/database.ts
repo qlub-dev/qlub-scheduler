@@ -33,17 +33,10 @@ export interface DbConfig {
  */
 export const database = function (
   this: Agenda,
-  config: DbConfig,
+  sequelizeInstance: Sequelize,
   cb?: (error: any | undefined, collection: string | null) => void
 ): Agenda | void {
-  const { dbName, host, port, user, password, dialect } = config;
-  const sequelize = new Sequelize(dbName, user, password, {
-    host: host,
-    port: port,
-    dialect: dialect,
-    logging: false,
-  });
-  this._db = sequelize;
+  this._db = sequelizeInstance;
   initModel(this._db);
   return this;
 };

@@ -1,3 +1,4 @@
+import { Sequelize } from "sequelize-typescript";
 import { Agenda } from ".";
 import { JobLogService } from "../cron-log/job.log.service";
 import { JobLogServiceImpl } from "../cron-log/job.log.service.impl";
@@ -7,7 +8,7 @@ class SchedulerService {
   private _agenda: Agenda | undefined;
   private _jobLogService: JobLogService | undefined;
 
-  constructor(param: { name: string; db: DbConfig }) {
+  constructor(param: { name: string; db: Sequelize }) {
     const { name, db } = param;
     this._agenda = new Agenda(
       {
