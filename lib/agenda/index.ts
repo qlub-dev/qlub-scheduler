@@ -94,7 +94,6 @@ class Agenda extends EventEmitter {
   _jobLogService?: JobLogService;
 
   cancel!: typeof cancel;
-  close!: typeof close;
   create!: typeof create;
   database!: typeof database;
   db_init!: typeof dbInit;
@@ -165,7 +164,6 @@ class Agenda extends EventEmitter {
 }
 
 Agenda.prototype.cancel = cancel;
-Agenda.prototype.close = close;
 Agenda.prototype.create = create;
 Agenda.prototype.database = database;
 Agenda.prototype.db_init = dbInit;
