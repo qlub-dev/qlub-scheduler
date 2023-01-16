@@ -10,6 +10,7 @@ export interface Pagination {
   pageNumber: number;
   sortBy: string;
   direction: Direction;
+  limit: number;
 }
 
 export interface JobDetail extends Pagination {

@@ -3,7 +3,12 @@ import { jobs } from "../agenda/database";
 import { complete } from "./complete";
 import { fail } from "./fail";
 import { initModel, JobLog } from "./job.log.entity";
-import { JobDetail, JobLogService, PAGE_LIMIT, Pagination } from "./job.log.service";
+import {
+  JobDetail,
+  JobLogService,
+  PAGE_LIMIT,
+  Pagination,
+} from "./job.log.service";
 import { start } from "./start";
 import { success } from "./success";
 
@@ -21,6 +26,7 @@ export class JobLogServiceImpl implements JobLogService {
   }
 
   async getJobs(pagination: Pagination): Promise<any> {
+    const { limit, pageNumber, sortBy, direction } = pagination;
     return jobs.findAll({
       attributes: [
         "id",
@@ -31,16 +37,17 @@ export class JobLogServiceImpl implements JobLogService {
         "repeatTimezone",
         "lastRunAt",
         "lastFinishedAt",
-        "createdAt"
+        "createdAt",
       ],
       raw: true,
-      limit: PAGE_LIMIT,
-      offset: pagination.pageNumber * PAGE_LIMIT,
-      order: [[pagination.sortBy, pagination.direction]]
+      limit: limit ?? PAGE_LIMIT,
+      offset: pageNumber * PAGE_LIMIT,
+      order: [[sortBy, direction]],
     });
   }
 
   async getJobLogs(cronDetail: JobDetail): Promise<any> {
+    const { limit, pageNumber, sortBy, direction, id } = cronDetail;
     return JobLog.findAll({
       attributes: [
         "id",
@@ -49,15 +56,15 @@ export class JobLogServiceImpl implements JobLogService {
         "job_time",
         "fail_reason",
         "cancelled_at",
-        "createdAt"
+        "createdAt",
       ],
       where: {
-        job_id: cronDetail.id
+        job_id: id,
       },
       raw: true,
-      limit: PAGE_LIMIT,
-      offset: cronDetail.pageNumber * PAGE_LIMIT,
-      order: [[cronDetail.sortBy, cronDetail.direction]]
+      limit: limit ?? PAGE_LIMIT,
+      offset: pageNumber * PAGE_LIMIT,
+      order: [[sortBy, direction]],
     });
   }
 }
