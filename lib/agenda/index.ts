@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 import humanInterval from "human-interval";
 import { Sequelize } from "sequelize-typescript";
+import { JobLog } from "../cron-log";
 import { JobLogService } from "../cron-log/job.log.service";
 import { Job } from "../job";
 import { repeatAt } from "../job/repeat-at";
@@ -117,6 +118,7 @@ class Agenda extends EventEmitter {
   start!: typeof start;
   stop!: typeof stop;
   repetAt!: typeof repeatAt;
+  jobLogs!: typeof JobLog;
 
   /**
    * Constructs a new Agenda object.
@@ -175,6 +177,7 @@ Agenda.prototype.disable = disable;
 Agenda.prototype.enable = enable;
 Agenda.prototype.every = every;
 Agenda.prototype.jobs = jobs;
+Agenda.prototype.jobLogs = JobLog;
 Agenda.prototype.lockLimit = lockLimit;
 Agenda.prototype.maxConcurrency = maxConcurrency;
 Agenda.prototype.name = name;

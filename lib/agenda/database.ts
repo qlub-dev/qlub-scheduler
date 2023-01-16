@@ -2,6 +2,7 @@ import createDebugger from "debug";
 import { Sequelize } from "sequelize-typescript";
 import { Agenda } from ".";
 import { DataTypes, Dialect, Model, Optional } from "sequelize";
+import { initJobLogModel } from "../cron-log/job.log.entity";
 
 export enum JobStatus {
   RUNNING = "RUNNING",
@@ -38,6 +39,7 @@ export const database = function (
 ): Agenda | void {
   this._db = sequelizeInstance;
   initModel(this._db);
+  initJobLogModel(this._db);
   return this;
 };
 

@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize-typescript";
 import { jobs } from "../agenda/database";
 import { complete } from "./complete";
 import { fail } from "./fail";
-import { initModel, JobLog } from "./job.log.entity";
+import { JobLog } from "./job.log.entity";
 import {
   JobDetail,
   JobLogService,
@@ -17,12 +17,10 @@ export class JobLogServiceImpl implements JobLogService {
   static fail: typeof fail;
   static complete: typeof complete;
   static start: typeof start;
-  _job_log: typeof JobLog;
   _db: Sequelize;
 
   constructor(sequelize: Sequelize) {
     this._db = sequelize;
-    this._job_log = initModel(this._db);
   }
 
   async getJobs(pagination: Pagination): Promise<any> {
