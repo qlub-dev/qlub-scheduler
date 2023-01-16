@@ -38,8 +38,8 @@ export const database = function (
   cb?: (error: any | undefined, collection: string | null) => void
 ): Agenda | void {
   this._db = sequelizeInstance;
-  initModel(this._db);
-  initJobLogModel(this._db);
+  this.jobs = initModel(this._db);
+  this.jobLogs = initJobLogModel(this._db);
   return this;
 };
 
