@@ -7,6 +7,7 @@ import { initJobLogModel } from "../cron-log/job.log.entity";
 export enum JobStatus {
   RUNNING = "RUNNING",
   FAILED = "FAILED",
+  STOPPED = "STOPPED",
 }
 export interface DbConfig {
   dbName: string;
