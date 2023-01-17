@@ -2,14 +2,13 @@ import { Sequelize } from "sequelize-typescript";
 import { Agenda } from ".";
 import { JobLogService } from "../cron-log/job.log.service";
 import { JobLogServiceImpl } from "../cron-log/job.log.service.impl";
-import { start } from "./start";
 
 class SchedulerService {
   private _agenda: Agenda | undefined;
   private _jobLogService: JobLogService | undefined;
 
   constructor(param: { name: string; db: Sequelize; start: boolean }) {
-    const { name, db } = param;
+    const { name, db, start } = param;
     this._agenda = new Agenda(
       {
         name,
@@ -20,7 +19,6 @@ class SchedulerService {
       }
     );
     this._jobLogService = new JobLogServiceImpl(this._agenda._db);
-
     if (!start) return;
 
     this._agenda.start();
