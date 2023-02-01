@@ -86,7 +86,7 @@ export enum QSchedulerExpression {
 
 export enum WEEK_DAYS {
   MONDAY = 1,
-  THUESDAY = 2,
+  TUESDAY = 2,
   WEDNESDAY = 3,
   THURSDAY = 4,
   FRIDAY = 5,
