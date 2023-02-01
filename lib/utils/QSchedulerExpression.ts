@@ -91,7 +91,7 @@ export enum WEEK_DAYS {
   THURSDAY = 4,
   FRIDAY = 5,
   SATURDAY = 6,
-  SUNDAY = "SUN",
+  SUNDAY = 0,
 }
 
 export interface Time {
