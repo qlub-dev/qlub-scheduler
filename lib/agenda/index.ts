@@ -1,18 +1,18 @@
 import { EventEmitter } from "events";
 import humanInterval from "human-interval";
 import { Sequelize } from "sequelize-typescript";
+import { JobLog } from "../cron-log";
 import { JobLogService } from "../cron-log/job.log.service";
 import { Job } from "../job";
 import { repeatAt } from "../job/repeat-at";
 import { cancel } from "./cancel";
-import { close } from "./close";
 import { create } from "./create";
-import { database, DbConfig, jobs } from "./database";
+import { database, jobs } from "./database";
 import { dbInit } from "./db-init";
 import { defaultConcurrency } from "./default-concurrency";
 import { defaultLockLifetime } from "./default-lock-lifetime";
 import { defaultLockLimit } from "./default-lock-limit";
-import { define } from "./define";
+import { define, Processor } from "./define";
 import { disable } from "./disable";
 import { enable } from "./enable";
 import { every } from "./every";
@@ -45,6 +45,19 @@ export interface AgendaConfig {
   disableAutoIndex?: boolean;
 }
 
+export interface JobDefinition {
+  blocked?: number;
+  fn: (...args: any[]) => any;
+  locked: number;
+  lockLimit: number;
+  concurrency: number;
+  running: number;
+  lockLifetime: number;
+  priority: number;
+  shouldSaveResult: boolean;
+  logging: boolean | undefined;
+}
+
 /**
  * @class Agenda
  * @param {Object} config - Agenda Config
@@ -70,7 +83,7 @@ class Agenda extends EventEmitter {
   _defaultConcurrency: any;
   _defaultLockLifetime: any;
   _defaultLockLimit: any;
-  _definitions: any;
+  _definitions: { [name: string]: JobDefinition };
   _findAndLockNextJob = findAndLockNextJob;
   _indices: any;
   _disableAutoIndex: boolean;
@@ -82,7 +95,6 @@ class Agenda extends EventEmitter {
   _runningJobs: Job[];
   _lockLimit: any;
   _maxConcurrency: any;
-  _mongoUseUnifiedTopology?: boolean;
   _name: any;
   _processEvery: number;
   _ready: Promise<unknown> | undefined;
@@ -92,6 +104,7 @@ class Agenda extends EventEmitter {
   _nextScanAt: any;
   _processInterval: any;
   _jobLogService?: JobLogService;
+  _sequelize!: Sequelize;
 
   cancel!: typeof cancel;
   create!: typeof create;
@@ -117,7 +130,8 @@ class Agenda extends EventEmitter {
   start!: typeof start;
   stop!: typeof stop;
   repetAt!: typeof repeatAt;
-
+  jobLogs!: typeof JobLog;
+  sequelize!: Sequelize;
   /**
    * Constructs a new Agenda object.
    * @param config Optional configuration to initialize the Agenda.
@@ -130,11 +144,12 @@ class Agenda extends EventEmitter {
   ) {
     super();
     this._jobLogService = jobLogService;
+    this.sequelize = config.db;
     this._name = config.name;
     this._processEvery = (humanInterval(config.processEvery) ??
       humanInterval("1 seconds")) as number; // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style
     this._defaultConcurrency = config.defaultConcurrency || 5;
-    this._maxConcurrency = config.maxConcurrency || 20;
+    this._maxConcurrency = config.maxConcurrency || 100;
     this._defaultLockLimit = config.defaultLockLimit || 0;
     this._lockLimit = config.lockLimit || 0;
     this._definitions = {};
@@ -175,6 +190,7 @@ Agenda.prototype.disable = disable;
 Agenda.prototype.enable = enable;
 Agenda.prototype.every = every;
 Agenda.prototype.jobs = jobs;
+Agenda.prototype.jobLogs = JobLog;
 Agenda.prototype.lockLimit = lockLimit;
 Agenda.prototype.maxConcurrency = maxConcurrency;
 Agenda.prototype.name = name;

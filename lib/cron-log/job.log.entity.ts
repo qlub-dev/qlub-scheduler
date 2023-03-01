@@ -40,7 +40,7 @@ export class JobLog
   updatedAt?: Date;
 }
 
-export function initModel(sequelize: Sequelize.Sequelize): typeof JobLog {
+export function initJobLogModel(sequelize: Sequelize.Sequelize): typeof JobLog {
   return JobLog.init(
     {
       id: {

@@ -84,6 +84,16 @@ export enum QSchedulerExpression {
   MONDAY_TO_FRIDAY_AT_11PM = "0 0 23 * * 1-5",
 }
 
+export enum WEEK_DAYS {
+  MONDAY = 1,
+  TUESDAY = 2,
+  WEDNESDAY = 3,
+  THURSDAY = 4,
+  FRIDAY = 5,
+  SATURDAY = 6,
+  SUNDAY = 0,
+}
+
 export interface Time {
   hour: number;
   minute: number;
@@ -108,7 +118,7 @@ export function EVERY_DAY_AT(time: Time) {
   return `${time.minute} ${time.hour} * * *`;
 }
 
-export function EVERY_WEEK_AT(time: Time) {
+export function EVERY_WEEK_AT(time: Time, day: WEEK_DAYS) {
   checkTime(time);
-  return `${time.minute} ${time.hour} * * 1`;
+  return `${time.minute} ${time.hour} * * ${day}`;
 }

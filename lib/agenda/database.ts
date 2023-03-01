@@ -2,10 +2,12 @@ import createDebugger from "debug";
 import { Sequelize } from "sequelize-typescript";
 import { Agenda } from ".";
 import { DataTypes, Dialect, Model, Optional } from "sequelize";
+import { initJobLogModel } from "../cron-log/job.log.entity";
 
 export enum JobStatus {
   RUNNING = "RUNNING",
   FAILED = "FAILED",
+  STOPPED = "STOPPED",
 }
 export interface DbConfig {
   dbName: string;
@@ -37,7 +39,8 @@ export const database = function (
   cb?: (error: any | undefined, collection: string | null) => void
 ): Agenda | void {
   this._db = sequelizeInstance;
-  initModel(this._db);
+  this.jobs = initModel(this._db);
+  this.jobLogs = initJobLogModel(this._db);
   return this;
 };
 
