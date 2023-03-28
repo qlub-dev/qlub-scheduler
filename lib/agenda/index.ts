@@ -32,6 +32,7 @@ import { start } from "./start";
 import { stop } from "./stop";
 
 export interface AgendaConfig {
+  start: boolean;
   name?: string;
   processEvery?: string;
   maxConcurrency?: number;
