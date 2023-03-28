@@ -17,6 +17,7 @@ export const start = async function (this: Agenda): Promise<void | unknown> {
     return this._ready;
   }
 
+  this.emit("ready");
   await this._ready;
   debug(
     "Agenda.start called, creating interval to call processJobs every [%dms]",

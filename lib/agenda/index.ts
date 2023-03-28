@@ -171,9 +171,9 @@ class Agenda extends EventEmitter {
     this._isLockingOnTheFly = false;
     this._isJobQueueFilling = new Map<string, boolean>();
     this._jobsToLock = [];
-    // this._ready = new Promise((resolve) => {
-    //   this.once("ready", resolve);
-    // });
+    this._ready = new Promise((resolve) => {
+      this.once("ready", resolve);
+    });
     this.database(config.db, cb);
   }
 }
