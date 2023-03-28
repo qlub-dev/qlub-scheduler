@@ -32,6 +32,7 @@ const processDbResult = async function (
       // find the doc using _id
       const result: any = await this.jobs.findOne({
         where: { id: attrs.id },
+        useMaster: true,
       });
 
       if (result) {
@@ -95,14 +96,14 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       debug(
         "job already has _id, calling findOneAndUpdate() using _id as query"
       );
-      if (await this.jobs.findOne({ where: { id } })) {
+      if (await this.jobs.findOne({ where: { id }, useMaster: true })) {
         const [_, result]: [number, any] = await this.jobs
           .update(props, {
             where: { id },
             returning: true,
           })
           .catch((error) => {
-            console.log("Job save error occured: ", error);
+            console.log("Job save error occurred: ", error);
             return error;
           });
         return await processDbResult.call(this, job, result[0]?.dataValues);
@@ -141,6 +142,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
             name: props.name,
             type: "single",
           },
+          useMaster: true,
         })
       ) {
         const [_, result]: [number, any] = await this.jobs
@@ -171,6 +173,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       if (
         await this.jobs.findOne({
           where: query,
+          useMaster: true,
         })
       ) {
         const [_, result]: [any, any] = await this.jobs

@@ -57,6 +57,7 @@ export const findAndLockNextJob = async function (
   // Find ONE and ONLY ONE job and set the 'lockedAt' time so that job begins to be processed
   let updated: any = await this.jobs.findOne({
     where: JOB_PROCESS_WHERE_QUERY,
+    useMaster: true,
   });
 
   let job: any;
