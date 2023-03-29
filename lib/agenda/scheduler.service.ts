@@ -1,3 +1,4 @@
+import debug from "debug";
 import { Sequelize } from "sequelize-typescript";
 import { Agenda, AgendaConfig } from ".";
 import { JobLogService } from "../cron-log/job.log.service";
@@ -10,7 +11,7 @@ class SchedulerService {
   constructor(param: AgendaConfig) {
     const { start } = param;
     this._agenda = new Agenda(param, (error) => {
-      console.log("Error: ", error);
+      debug(`Error while creating instance of agenda err: ${error}`);
     });
     this._jobLogService = new JobLogServiceImpl(this._agenda._db);
     if (!start) return;

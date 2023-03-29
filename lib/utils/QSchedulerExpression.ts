@@ -3,7 +3,7 @@ export enum QSchedulerExpression {
   EVERY_5_SECONDS = "*/5 * * * * *",
   EVERY_10_SECONDS = "*/10 * * * * *",
   EVERY_30_SECONDS = "*/30 * * * * *",
-  EVERY_MINUTE = "*/1 * * * *",
+  EVERY_MINUTE = "* */1 * * * *",
   EVERY_5_MINUTES = "0 */5 * * * *",
   EVERY_10_MINUTES = "0 */10 * * * *",
   EVERY_30_MINUTES = "0 */30 * * * *",

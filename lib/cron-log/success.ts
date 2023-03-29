@@ -1,3 +1,4 @@
+import debug from "debug";
 import { Job, JobAttributesData } from "../job";
 import { JobLog, ResultStatus } from "./job.log.entity";
 
@@ -11,6 +12,6 @@ export const success = async (job: Job<JobAttributesData>): Promise<void> => {
     created_at: new Date(),
   };
   JobLog.create<any>(success_log).catch((error) =>
-    console.log("JobLog Success Create Error: ", error)
+    debug(`JobLog Success Create Error: ${error}`)
   );
 };

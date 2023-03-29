@@ -122,7 +122,7 @@ export const processJobs = async function (
     const job = self._jobsToLock.pop();
     if (job === undefined) {
       debug(
-        "no job was popped from _jobsToLock, extremly unlikely but not impossible concurrency issue"
+        "no job was popped from _jobsToLock, extremely unlikely but not impossible concurrency issue"
       );
       self._isLockingOnTheFly = false;
       return;
@@ -214,7 +214,7 @@ export const processJobs = async function (
       // 3. Queue the job to actually be run now that it is locked
       // 4. Recursively run this same method we are in to check for more available jobs of same type!
       if (job) {
-        // Before en-queing job make sure we haven't exceed our lock limits
+        // Before en-queueing job make sure we haven't exceed our lock limits
         if (!shouldLock(name)) {
           debug(
             "lock limit reached before job was returned. Releasing lock on [%s]",
@@ -311,7 +311,7 @@ export const processJobs = async function (
 
             // If you have few thousand jobs for one worker it would throw "RangeError: Maximum call stack size exceeded"
             // every 5 minutes (using the default options).
-            // We need to utilise the setImmedaite() to break the call stack back to 0.
+            // We need to utilize the setImmediate() to break the call stack back to 0.
             setImmediate(jobProcessing);
             return;
           }

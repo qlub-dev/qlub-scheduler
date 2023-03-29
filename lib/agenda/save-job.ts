@@ -103,10 +103,10 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
             returning: true,
           })
           .catch((error) => {
-            console.log("Job save error occurred: ", error);
+            debug("Job save error occurred: ");
             return error;
           });
-        return await processDbResult.call(this, job, result[0]?.dataValues);
+        return await processDbResult.call(this, job, result[0]?.toJSON());
       }
     }
 
@@ -154,10 +154,10 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
             returning: true,
           })
           .catch((error) => {
-            console.log("Job save error occured: ", error);
+            debug("Job save error occurred: ", error);
             return error;
           });
-        return await processDbResult.call(this, job, result[0]?.dataValues);
+        return await processDbResult.call(this, job, result?.[0]?.toJSON());
       }
     }
 
@@ -182,7 +182,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
             returning: true,
           })
           .catch((error) => {
-            console.log("Job save error occured: ", error);
+            debug("Job save error occurred: ", error);
             return error;
           });
         return await processDbResult.call(this, job, result[0]?.dataValues);
@@ -196,7 +196,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
     );
     props.status = JobStatus.RUNNING;
     const result = await this.jobs.create<any>(props).catch((error) => {
-      console.log("Job create error occured: ", error);
+      debug("Job create error occurred: ", error);
       return error;
     });
     return await processDbResult.call(this, job, result?.dataValues);

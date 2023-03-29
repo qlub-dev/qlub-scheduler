@@ -18,7 +18,6 @@ import { enable } from "./enable";
 import { every } from "./every";
 import { findAndLockNextJob } from "./find-and-lock-next-job";
 import { JobProcessingQueue } from "./job-processing-queue";
-import { getJobs } from "./jobs";
 import { lockLimit } from "./lock-limit";
 import { maxConcurrency } from "./max-concurrency";
 import { name } from "./name";
@@ -41,7 +40,6 @@ export interface AgendaConfig {
   defaultLockLimit?: number;
   defaultLockLifetime?: number;
   sort?: any;
-  seq?: Sequelize;
   db: Sequelize;
   disableAutoIndex?: boolean;
 }
@@ -130,7 +128,7 @@ class Agenda extends EventEmitter {
   sort!: typeof sort;
   start!: typeof start;
   stop!: typeof stop;
-  repetAt!: typeof repeatAt;
+  repeatAt!: typeof repeatAt;
   jobLogs!: typeof JobLog;
   sequelize!: Sequelize;
   /**
@@ -148,7 +146,7 @@ class Agenda extends EventEmitter {
     this.sequelize = config.db;
     this._name = config.name;
     this._processEvery = (humanInterval(config.processEvery) ??
-      humanInterval("1 seconds")) as number; // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style
+      humanInterval("120 seconds")) as number; // eslint-disable-line @typescript-eslint/non-nullable-type-assertion-style
     this._defaultConcurrency = config.defaultConcurrency || 5;
     this._maxConcurrency = config.maxConcurrency || 100;
     this._defaultLockLimit = config.defaultLockLimit || 0;

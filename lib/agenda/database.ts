@@ -47,7 +47,7 @@ export const database = function (
 export interface entityAttributes {
   id: BigInt;
 
-  agenda: JSON;
+  agenda: Agenda;
 
   type: string;
 
@@ -128,7 +128,7 @@ export class jobs
   implements entityAttributes
 {
   id!: BigInt;
-  agenda!: JSON;
+  agenda!: Agenda;
   type!: string;
   name!: string;
   disabled?: boolean | undefined;
@@ -177,6 +177,7 @@ function initModel(sequelize: Sequelize): typeof jobs {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: true,
+        unique: true,
       },
       disabled: {
         type: DataTypes.BOOLEAN,
