@@ -1,4 +1,4 @@
-import { JobDefinition } from ".";
+import { JobDefinition, JobDefinitions } from ".";
 import { Job, JobAttributesData } from "../job";
 
 /**
@@ -12,7 +12,7 @@ class JobProcessingQueue {
   push!: (job: Job) => void;
   insert!: (job: Job) => void;
   remove!: (job: Job) => void;
-  returnNextConcurrencyFreeJob!: (jobDefinitions: any) => Job | null;
+  returnNextConcurrencyFreeJob!: (jobDefinitions: JobDefinitions) => Job;
 
   protected _queue: Job[];
 
@@ -85,8 +85,8 @@ JobProcessingQueue.prototype.insert = function (
  */
 JobProcessingQueue.prototype.returnNextConcurrencyFreeJob = function (
   this: JobProcessingQueue,
-  jobDefinitions: JobDefinition[]
-): Job<JobAttributesData> | null {
+  jobDefinitions: JobDefinitions
+): Job<JobAttributesData> {
   let next;
   for (next = this._queue.length - 1; next > 0; next -= 1) {
     const def = jobDefinitions[this._queue[next].attrs.name];
@@ -94,7 +94,6 @@ JobProcessingQueue.prototype.returnNextConcurrencyFreeJob = function (
       break;
     }
   }
-  if (!next) return null;
   return this._queue[next];
 };
 

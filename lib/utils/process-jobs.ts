@@ -162,8 +162,6 @@ export const processJobs = async function (
             job.attrs.name,
             job.attrs.id
           );
-          self._lockedJobs.push(job);
-          definitions[job.attrs.name].locked++;
           enqueueJob(job);
           jobProcessing();
         }
@@ -217,10 +215,7 @@ export const processJobs = async function (
           await self.saveJob(job);
           return;
         }
-
         debug("[%s:%s] job locked while filling queue", name, job.attrs.id);
-        self._lockedJobs.push(job);
-        definitions[job.attrs.name].locked++;
         enqueueJob(job);
         jobProcessing();
       }
@@ -228,6 +223,30 @@ export const processJobs = async function (
       debug("[%s] job lock failed while filling queue", name, error);
     } finally {
       self._isJobQueueFilling.delete(name);
+    }
+  }
+
+  function localLockJob(job: Job) {
+    self._lockedJobs.push(job);
+    definitions[job.attrs.name].locked++;
+  }
+
+  function localUnLockJob(job: Job) {
+    self._lockedJobs.push(job);
+    if (definitions[job.attrs.name].locked > 0) {
+      definitions[job.attrs.name].locked--;
+    }
+  }
+
+  function addRunningJobs(job: Job) {
+    self._runningJobs.push(job);
+    definitions[job.attrs.name].running++;
+  }
+
+  function removeRunningJobs(job: Job) {
+    self._runningJobs.splice(self._runningJobs.indexOf(job), 1);
+    if (definitions[job.attrs.name].running > 0) {
+      definitions[job.attrs.name].running--;
     }
   }
 
@@ -246,30 +265,25 @@ export const processJobs = async function (
 
     // Get the next job that is not blocked by concurrency
     const job = jobQueue.returnNextConcurrencyFreeJob(definitions);
-    if (!job) return;
 
     jobQueue.remove(job);
     debug("[%s:%s] about to process job", job.attrs.name, job.attrs.id);
-
-    // If the current time is older than the 'nextRunAt' time, run the job
-    // Otherwise, setTimeout that gets called at the time of 'nextRunAt'
-    if (!job.attrs.nextRunAt || job.attrs.nextRunAt <= now) {
-      debug(
-        "[%s:%s] nextRunAt is in the past, run the job immediately",
-        job.attrs.name,
-        job.attrs.id
-      );
-      runOrRetry(job);
-    } else {
-      // @ts-expect-error linter complains about Date-arithmetic
-      const runIn = job.attrs.nextRunAt - now;
-      debug(
-        "[%s:%s] nextRunAt is in the future, calling setTimeout(%d)",
-        job.attrs.name,
-        job.attrs.id,
-        runIn
-      );
-      setTimeout(jobProcessing, runIn);
+    try {
+      localLockJob(job);
+      // If the current time is older than the 'nextRunAt' time, run the job
+      // Otherwise, setTimeout that gets called at the time of 'nextRunAt'
+      if (!job.attrs.nextRunAt || job.attrs.nextRunAt <= now) {
+        debug(
+          "[%s:%s] nextRunAt is in the past, run the job immediately",
+          job.attrs.name,
+          job.attrs.id
+        );
+        runOrRetry(job);
+      }
+    } catch (err) {
+      console.log({ err });
+    } finally {
+      localUnLockJob(job);
     }
 
     /**
@@ -299,8 +313,6 @@ export const processJobs = async function (
               job.attrs.name,
               job.attrs.id
             );
-            self._lockedJobs.splice(self._lockedJobs.indexOf(job), 1);
-            jobDefinition.locked--;
 
             // If you have few thousand jobs for one worker it would throw "RangeError: Maximum call stack size exceeded"
             // every 5 minutes (using the default options).
@@ -308,20 +320,27 @@ export const processJobs = async function (
             return;
           }
 
-          // Add to local "running" queue
-          self._runningJobs.push(job);
-          jobDefinition.running++;
+          try {
+            // Add to local "running" queue
+            addRunningJobs(job);
 
-          // CALL THE ACTUAL METHOD TO PROCESS THE JOB!!!
-          debug("[%s:%s] processing job", job.attrs.name, job.attrs.id);
+            // CALL THE ACTUAL METHOD TO PROCESS THE JOB!!!
+            debug("[%s:%s] processing job", job.attrs.name, job.attrs.id);
 
-          job
-            .run()
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .then((job: any) => processJobResult(job))
-            .catch((error: Error) => {
-              return job.agenda.emit("error", error);
-            });
+            job
+              .run()
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .then((job: any) => {
+                console.log({ name: job.attrs.name, run: true });
+              })
+              .catch((error: Error) => {
+                console.log({ error });
+                return job.agenda.emit("error", error);
+              });
+          } catch (err) {
+          } finally {
+            removeRunningJobs(job);
+          }
         } else {
           // Run the job immediately by putting it on the top of the queue
           debug(
@@ -333,40 +352,5 @@ export const processJobs = async function (
         }
       }
     }
-  }
-
-  /**
-   * Internal method used to run the job definition
-   * @param {Error} err thrown if can't process job
-   * @param {Job} job job to process
-   */
-  function processJobResult(job: Job) {
-    const { name } = job.attrs;
-
-    // Job isn't in running jobs so throw an error
-    if (!self._runningJobs.includes(job)) {
-      debug(
-        "[%s] callback was called, job must have been marked as complete already",
-        job.attrs.id
-      );
-      throw new Error(
-        `callback already called - job ${name} already marked complete`
-      );
-    }
-
-    // Remove the job from the running queue
-    self._runningJobs.splice(self._runningJobs.indexOf(job), 1);
-    if (definitions[name].running > 0) {
-      definitions[name].running--;
-    }
-
-    // Remove the job from the locked queue
-    self._lockedJobs.splice(self._lockedJobs.indexOf(job), 1);
-    if (definitions[name].locked > 0) {
-      definitions[name].locked--;
-    }
-
-    // Re-process jobs now that one has finished
-    jobProcessing();
   }
 };

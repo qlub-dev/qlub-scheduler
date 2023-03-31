@@ -78,11 +78,13 @@ export interface JobDefinition {
  * @property {Map} _isJobQueueFilling - A map of jobQueues and if the 'jobQueueFilling' method is currently running for a given map. 'lockingOnTheFly' and 'jobQueueFilling' should not run concurrently for the same jobQueue. It can cause that lock limits aren't honored.
  * @property {Array} _jobsToLock
  */
+
+export type JobDefinitions = { [name: string]: JobDefinition };
 class Agenda extends EventEmitter {
   _defaultConcurrency: any;
   _defaultLockLifetime: any;
   _defaultLockLimit: any;
-  _definitions: { [name: string]: JobDefinition };
+  _definitions: JobDefinitions;
   _findAndLockNextJob = findAndLockNextJob;
   _indices: any;
   _disableAutoIndex: boolean;
