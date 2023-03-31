@@ -88,6 +88,10 @@ export const processJobs = async function (
     jobQueue.insert(job);
   }
 
+  function dequeueJob(job: Job) {
+    jobQueue.remove(job);
+  }
+
   /**
    * Internal method that will lock a job and store it on DB
    * This method is called when we immediately start to process a job without using the process interval
@@ -266,7 +270,7 @@ export const processJobs = async function (
     // Get the next job that is not blocked by concurrency
     const job = jobQueue.returnNextConcurrencyFreeJob(definitions);
 
-    jobQueue.remove(job);
+    dequeueJob(job);
     debug("[%s:%s] about to process job", job.attrs.name, job.attrs.id);
     try {
       localLockJob(job);
