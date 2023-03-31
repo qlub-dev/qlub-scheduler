@@ -9,6 +9,9 @@ import { Job, JobAttributesData } from "../job";
  * @returns {Job} returns created job
  */
 export const createJob = (agenda: Agenda, jobData: jobs): Job => {
+  if (!jobData) {
+    throw new Error("job cannot be null | undefined");
+  }
   jobData.agenda = agenda;
   return new Job(jobData);
 };

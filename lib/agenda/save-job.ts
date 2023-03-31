@@ -71,7 +71,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
 
     // Grab information needed to save job but that we don't want to persist in DB
     const id = job.attrs.id;
-    const { unique, uniqueOpts } = job.attrs;
+    const { unique } = job.attrs;
 
     // Store job as JSON and remove props we don't want to store from object
     const props = job.toJSON();
@@ -96,18 +96,16 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       debug(
         "job already has _id, calling findOneAndUpdate() using _id as query"
       );
-      if (await this.jobs.findOne({ where: { id }, useMaster: true })) {
-        const [_, result]: [number, any] = await this.jobs
-          .update(props, {
-            where: { id },
-            returning: true,
-          })
-          .catch((error) => {
-            debug("Job save error occurred: ");
-            return error;
-          });
-        return await processDbResult.call(this, job, result[0]?.toJSON());
-      }
+      const [_, result]: [number, any] = await this.jobs
+        .update(props, {
+          where: { id },
+          returning: true,
+        })
+        .catch((error) => {
+          debug("Job save error occurred: ");
+          return error;
+        });
+      return await processDbResult.call(this, job, result?.[0]?.toJSON());
     }
 
     if (props.type === "single") {
@@ -199,7 +197,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       debug("Job create error occurred: ", error);
       return error;
     });
-    return await processDbResult.call(this, job, result?.dataValues);
+    return await processDbResult.call(this, job, result?.toJSON());
   } catch (error) {
     debug("processDbResult() received an error, job was not updated/created");
     throw error;

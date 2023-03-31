@@ -1,6 +1,6 @@
 import createDebugger from "debug";
 import { createJob } from "./create-job";
-import { Job } from "../job";
+import { Job, JobAttributesData } from "../job";
 import { Agenda } from "../agenda";
 import { jobs } from "../agenda/database";
 import { Op } from "sequelize";
@@ -84,14 +84,8 @@ export const processJobs = async function (
    * Internal method that adds jobs to be processed to the local queue
    * @param jobs Jobs to queue
    */
-  function enqueueJobs(jobs: Job[] | Job) {
-    if (!Array.isArray(jobs)) {
-      jobs = [jobs];
-    }
-
-    jobs.forEach((job: Job) => {
-      jobQueue.insert(job);
-    });
+  function enqueueJob(job: Job) {
+    jobQueue.insert(job);
   }
 
   /**
@@ -170,7 +164,7 @@ export const processJobs = async function (
           );
           self._lockedJobs.push(job);
           definitions[job.attrs.name].locked++;
-          enqueueJobs(job);
+          enqueueJob(job);
           jobProcessing();
         }
       });
@@ -203,8 +197,7 @@ export const processJobs = async function (
       }
 
       // Set the date of the next time we are going to run _processEvery function
-      const now = new Date();
-      self._nextScanAt = new Date(now.valueOf() + self._processEvery);
+      self._nextScanAt = new Date(Date.now().valueOf() + self._processEvery);
 
       // For this job name, find the next job to run and lock it!
       const job = await self._findAndLockNextJob(name, definitions[name]);
@@ -228,8 +221,7 @@ export const processJobs = async function (
         debug("[%s:%s] job locked while filling queue", name, job.attrs.id);
         self._lockedJobs.push(job);
         definitions[job.attrs.name].locked++;
-        enqueueJobs(job);
-        // await jobQueueFilling(name);
+        enqueueJob(job);
         jobProcessing();
       }
     } catch (error) {
@@ -254,10 +246,12 @@ export const processJobs = async function (
 
     // Get the next job that is not blocked by concurrency
     const job = jobQueue.returnNextConcurrencyFreeJob(definitions);
+    if (!job) return;
 
+    jobQueue.remove(job);
     debug("[%s:%s] about to process job", job.attrs.name, job.attrs.id);
 
-    // If the 'nextRunAt' time is older than the current time, run the job
+    // If the current time is older than the 'nextRunAt' time, run the job
     // Otherwise, setTimeout that gets called at the time of 'nextRunAt'
     if (!job.attrs.nextRunAt || job.attrs.nextRunAt <= now) {
       debug(
@@ -265,7 +259,7 @@ export const processJobs = async function (
         job.attrs.name,
         job.attrs.id
       );
-      runOrRetry();
+      runOrRetry(job);
     } else {
       // @ts-expect-error linter complains about Date-arithmetic
       const runIn = job.attrs.nextRunAt - now;
@@ -282,10 +276,9 @@ export const processJobs = async function (
      * Internal method that tries to run a job and if it fails, retries again!
      * @returns {undefined}
      */
-    function runOrRetry() {
+    function runOrRetry(job: Job) {
       if (self._processInterval) {
         // @todo: We should check if job exists
-        const job = jobQueue.pop()!;
         const jobDefinition = definitions[job.attrs.name];
         if (
           jobDefinition.concurrency > jobDefinition.running &&
@@ -312,7 +305,6 @@ export const processJobs = async function (
             // If you have few thousand jobs for one worker it would throw "RangeError: Maximum call stack size exceeded"
             // every 5 minutes (using the default options).
             // We need to utilize the setImmediate() to break the call stack back to 0.
-            setImmediate(jobProcessing);
             return;
           }
 
@@ -337,7 +329,7 @@ export const processJobs = async function (
             job.attrs.name,
             job.attrs.id
           );
-          enqueueJobs(job);
+          enqueueJob(job);
         }
       }
     }

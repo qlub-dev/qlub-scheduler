@@ -1,4 +1,5 @@
-import { Job } from "../job";
+import { JobDefinition } from ".";
+import { Job, JobAttributesData } from "../job";
 
 /**
  * @class
@@ -10,7 +11,8 @@ class JobProcessingQueue {
   pop!: () => Job | undefined;
   push!: (job: Job) => void;
   insert!: (job: Job) => void;
-  returnNextConcurrencyFreeJob!: (agendaDefinitions: any) => Job;
+  remove!: (job: Job) => void;
+  returnNextConcurrencyFreeJob!: (jobDefinitions: any) => Job | null;
 
   protected _queue: Job[];
 
@@ -83,17 +85,33 @@ JobProcessingQueue.prototype.insert = function (
  */
 JobProcessingQueue.prototype.returnNextConcurrencyFreeJob = function (
   this: JobProcessingQueue,
-  agendaDefinitions: any
-) {
+  jobDefinitions: JobDefinition[]
+): Job<JobAttributesData> | null {
   let next;
   for (next = this._queue.length - 1; next > 0; next -= 1) {
-    const def = agendaDefinitions[this._queue[next].attrs.name];
+    const def = jobDefinitions[this._queue[next].attrs.name];
     if (def.concurrency > def.running) {
       break;
     }
   }
-
+  if (!next) return null;
   return this._queue[next];
+};
+
+JobProcessingQueue.prototype.remove = function (
+  this: JobProcessingQueue,
+  job: Job
+): void {
+  let removeJobIndex = this._queue.indexOf(job);
+  if (removeJobIndex === -1) {
+    // lookup by id
+    removeJobIndex = this._queue.findIndex((j) => j.attrs.id === job.attrs.id);
+  }
+  if (removeJobIndex === -1) {
+    throw new Error(`cannot find job ${job.attrs.id} in processing queue?`);
+  }
+
+  this._queue.splice(removeJobIndex, 1);
 };
 
 export { JobProcessingQueue };
