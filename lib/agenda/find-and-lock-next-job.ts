@@ -64,10 +64,13 @@ export const findAndLockNextJob = async function (
 
   if (updated) {
     updated.lockedAt = now;
-    const [_, affectedRows] = await this.jobs.update(updated, {
-      where: { name: jobName },
-      returning: true,
-    });
+    const [_, affectedRows] = await this.jobs.update(
+      { id: updated.id },
+      {
+        where: { name: jobName },
+        returning: true,
+      }
+    );
     job = createJob(this, affectedRows?.[0]?.toJSON());
   }
 
