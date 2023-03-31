@@ -1,4 +1,5 @@
 import createDebugger from "debug";
+import { Op } from "sequelize";
 import { Agenda } from ".";
 import { Job } from "../job";
 import { processJobs } from "../utils";
@@ -134,20 +135,19 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
       debug(
         'calling findOneAndUpdate() with job name and type of "single" as query'
       );
-      if (
-        await this.jobs.findOne({
-          where: {
-            name: props.name,
-            type: "single",
-          },
-          useMaster: true,
-        })
-      ) {
+      const _job = await this.jobs.findOne({
+        where: {
+          name: props.name,
+          type: "single",
+        },
+        useMaster: true,
+      });
+
+      if (_job) {
         const [_, result]: [number, any] = await this.jobs
           .update(props, {
             where: {
-              name: props.name,
-              type: "single",
+              id: _job.id,
             },
             returning: true,
           })
@@ -155,6 +155,10 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
             debug("Job save error occurred: ", error);
             return error;
           });
+        this.jobs.update(
+          { disabled: true },
+          { where: { id: { [Op.ne]: _job.id } } }
+        );
         return await processDbResult.call(this, job, result?.[0]?.toJSON());
       }
     }
