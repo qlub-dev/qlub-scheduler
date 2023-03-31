@@ -157,7 +157,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
           });
         this.jobs.update(
           { disabled: true },
-          { where: { id: { [Op.ne]: _job.id } } }
+          { where: { name: _job.name, id: { [Op.ne]: _job.id } } }
         );
         return await processDbResult.call(this, job, result?.[0]?.toJSON());
       }
