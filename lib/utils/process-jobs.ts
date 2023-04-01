@@ -264,7 +264,7 @@ export const processJobs = async function (
    * Internal method that processes any jobs in the local queue (array)
    * @returns {undefined}
    */
-  function jobProcessing() {
+  async function jobProcessing() {
     // Ensure we have jobs
     if (jobQueue.length === 0) {
       return;
@@ -288,10 +288,10 @@ export const processJobs = async function (
           job.attrs.name,
           job.attrs.id
         );
-        runOrRetry(job);
+        await runOrRetry(job);
       }
     } catch (err) {
-      console.log({ err });
+      debug(`Error while running job: ${job.attrs.name}`);
     } finally {
       localUnLockJob(job);
     }
@@ -300,7 +300,7 @@ export const processJobs = async function (
      * Internal method that tries to run a job and if it fails, retries again!
      * @returns {undefined}
      */
-    function runOrRetry(job: Job) {
+    async function runOrRetry(job: Job) {
       if (self._processInterval) {
         // @todo: We should check if job exists
         const jobDefinition = definitions[job.attrs.name];
@@ -334,17 +334,9 @@ export const processJobs = async function (
             // CALL THE ACTUAL METHOD TO PROCESS THE JOB!!!
             debug("[%s:%s] processing job", job.attrs.name, job.attrs.id);
 
-            job
-              .run()
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .then((job: any) => {
-                console.log({ name: job.attrs.name, run: true });
-              })
-              .catch((error: Error) => {
-                console.log({ error });
-                return job.agenda.emit("error", error);
-              });
+            await job.run();
           } catch (err) {
+            debug(`Error while executing job name: ${job.attrs.name}`);
           } finally {
             removeRunningJobs(job);
           }

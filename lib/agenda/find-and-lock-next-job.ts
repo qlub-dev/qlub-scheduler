@@ -67,7 +67,13 @@ export const findAndLockNextJob = async function (
       updated.id
     }
     `);
-    return createJob(this, updated?.toJSON());
+    try {
+      return createJob(this, updated?.toJSON());
+    } finally {
+      await this.jobs.sequelize?.query(`
+      UPDATE jobs set "lockedAt" = null where id = ${updated.id}
+    `);
+    }
   }
 
   return;
