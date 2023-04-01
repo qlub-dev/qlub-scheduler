@@ -55,24 +55,19 @@ export const findAndLockNextJob = async function (
    */
 
   // Find ONE and ONLY ONE job and set the 'lockedAt' time so that job begins to be processed
-  let updated: any = await this.jobs.findOne({
+  const updated: any = await this.jobs.findOne({
     where: JOB_PROCESS_WHERE_QUERY,
     useMaster: true,
   });
 
-  let job: any;
-
   if (updated) {
-    const [_, affectedRows] = await this.jobs.update(
-      { lockedAt: now },
-      {
-        where: { id: updated.id },
-        returning: true,
-      }
-    );
-    job = createJob(this, affectedRows?.[0]?.toJSON());
+    updated.lockedAt = now;
+    await this.jobs.sequelize?.query(`
+      UPDATE jobs set "lockedAt" = '${now}' where id = ${updated.id};
+    `);
+    return createJob(this, updated?.toJSON());
   }
 
   // @ts-ignore
-  return job;
+  return;
 };
