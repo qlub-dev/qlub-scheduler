@@ -51,8 +51,15 @@ export const processJobs = async function (
       extraJob.attrs.name,
       extraJob.attrs.id
     );
-    self._jobsToLock.push(extraJob);
-    await lockOnTheFly();
+    try {
+      self._jobsToLock.push(extraJob);
+      await lockOnTheFly();
+    } finally {
+      const index = self._jobsToLock.indexOf(extraJob);
+      if (index > -1) {
+        self._jobsToLock.splice(index, 1);
+      }
+    }
   }
 
   /**
