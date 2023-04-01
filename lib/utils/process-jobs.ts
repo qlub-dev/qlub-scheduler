@@ -236,7 +236,7 @@ export const processJobs = async function (
   }
 
   function localUnLockJob(job: Job) {
-    self._lockedJobs.push(job);
+    self._lockedJobs.splice(self._lockedJobs.indexOf(job), 1);
     if (definitions[job.attrs.name].locked > 0) {
       definitions[job.attrs.name].locked--;
     }
