@@ -33,7 +33,7 @@ export const findAndLockNextJob = async function (
       {
         [Op.or]: [
           {
-            lockedAt: { [Op.eq]: null },
+            lockedAt: null,
             nextRunAt: { [Op.lte]: this._nextScanAt },
           },
           {

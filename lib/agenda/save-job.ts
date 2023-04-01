@@ -31,13 +31,13 @@ const processDbResult = async function (
 
     if (attrs.id) {
       // find the doc using _id
-      const result: any = await this.jobs.findOne({
-        where: { id: attrs.id },
+      const result = await this.jobs.findOne({
+        where: { id: attrs.id, disabled: { [Op.ne]: true } },
         useMaster: true,
       });
 
       if (result) {
-        nextRunAt = result.dataValues.nextRunAt;
+        nextRunAt = result.toJSON().nextRunAt;
       }
     }
     job.attrs.id = attrs.id;
@@ -139,6 +139,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
         where: {
           name: props.name,
           type: "single",
+          disabled: { [Op.ne]: true },
         },
         useMaster: true,
       });
@@ -172,12 +173,11 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
         "calling findOneAndUpdate() with unique object as query: \n%O",
         query
       );
-      if (
-        await this.jobs.findOne({
-          where: query,
-          useMaster: true,
-        })
-      ) {
+      const uniqueJob = await this.jobs.findOne({
+        where: { ...query, disabled: { [Op.ne]: true } },
+        useMaster: true,
+      });
+      if (uniqueJob) {
         const [_, result]: [any, any] = await this.jobs
           .update(props, {
             where: query,
@@ -187,7 +187,7 @@ export const saveJob = async function (this: Agenda, job: Job): Promise<Job> {
             debug("Job save error occurred: ", error);
             return error;
           });
-        return await processDbResult.call(this, job, result[0]?.dataValues);
+        return await processDbResult.call(this, job, result?.[0]?.toJSON());
       }
     }
 

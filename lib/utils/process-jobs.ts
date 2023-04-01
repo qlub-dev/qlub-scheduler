@@ -159,8 +159,8 @@ export const processJobs = async function (
     await jobs
       .update({ lockedAt: now }, { where: criteria, returning: true })
       .then(([rowsUpdate, updated]: [any, any]) => {
-        if (updated) {
-          const job = createJob(self, updated[0].dataValues);
+        if (updated && updated?.length > 0) {
+          const job = createJob(self, updated?.[0].toJSON());
           debug(
             "found job [%s:%s] that can be locked on the fly",
             job.attrs.name,
@@ -236,7 +236,10 @@ export const processJobs = async function (
   }
 
   function localUnLockJob(job: Job) {
-    self._lockedJobs.splice(self._lockedJobs.indexOf(job), 1);
+    const index = self._lockedJobs.indexOf(job);
+    if (index > -1) {
+      self._lockedJobs.splice(index, 1);
+    }
     if (definitions[job.attrs.name].locked > 0) {
       definitions[job.attrs.name].locked--;
     }
@@ -248,7 +251,10 @@ export const processJobs = async function (
   }
 
   function removeRunningJobs(job: Job) {
-    self._runningJobs.splice(self._runningJobs.indexOf(job), 1);
+    const index = self._runningJobs.indexOf(job);
+    if (index > -1) {
+      self._runningJobs.splice(index, 1);
+    }
     if (definitions[job.attrs.name].running > 0) {
       definitions[job.attrs.name].running--;
     }
@@ -298,10 +304,7 @@ export const processJobs = async function (
       if (self._processInterval) {
         // @todo: We should check if job exists
         const jobDefinition = definitions[job.attrs.name];
-        if (
-          jobDefinition.concurrency > jobDefinition.running &&
-          self._runningJobs.length < self._maxConcurrency
-        ) {
+        if (self._runningJobs.length < self._maxConcurrency) {
           // Get the deadline of when the job is not supposed to go past for locking
           const lockDeadline = new Date(
             Date.now() - jobDefinition.lockLifetime
